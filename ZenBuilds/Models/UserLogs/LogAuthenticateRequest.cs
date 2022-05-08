@@ -1,11 +1,10 @@
-﻿namespace ZenBuilds.Entities;
+﻿namespace ZenBuilds.Models.UserLogs;
 
-public class UserLog
+public class LogAuthenticateRequest
 {
-    // create composite key of username and id?
-    public int Id { get; set; }
     public string Username { get; set; }
     public string Ip { get; set; }
     public bool AuthSuccessful { get; set; }
     public DateTime Date { get; set; }
+
 }
