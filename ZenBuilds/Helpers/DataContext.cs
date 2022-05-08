@@ -30,6 +30,7 @@ public class DataContext : DbContext
         // composite primary key 
         builder.Entity<Follower>().HasKey(x => new { x.User_UserId, x.Follower_UserId });
         builder.Entity<Build>().HasKey(x => new { x.UserId, x.Id });
+        builder.Entity<UserLog>().HasKey(x => new { x.UserId, x.Id });
 
         // setting follower relations to resolve problem of not having two follower-collections in user entity
         builder.Entity<Follower>()

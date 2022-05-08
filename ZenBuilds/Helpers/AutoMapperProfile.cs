@@ -17,6 +17,8 @@ public class AutoMapperProfile : Profile
         CreateMap<LogAuthenticateRequest, UserLog>();
         CreateMap<User, AuthenticateResponse>();
         CreateMap<FollowRequest, Follower>();
+        CreateMap<UpdateRequest, User>();
+        
     }
     
 }

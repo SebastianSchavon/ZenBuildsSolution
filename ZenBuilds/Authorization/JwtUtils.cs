@@ -34,7 +34,7 @@ public class JwtUtils : IJwtUtils
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
-            Expires = DateTime.UtcNow.AddDays(1),
+            Expires = DateTime.UtcNow.AddDays(3),
 
             // define signingcredentials: key and algorithm
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(EncodeKey()), SecurityAlgorithms.HmacSha256Signature)

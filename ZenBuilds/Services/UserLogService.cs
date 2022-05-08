@@ -15,6 +15,10 @@ public interface IUserLogService
 
 }
 
+/// <summary>
+/// logs and displays all authentication tries when a valid username is being used
+/// properties of userId, datetime, ip-adress and if the authentication was succesful or not is beging stored
+/// </summary>
 public class UserLogService : IUserLogService
 {
     private DataContext _context;
@@ -41,17 +45,17 @@ public class UserLogService : IUserLogService
 
     public IEnumerable<UserLog> GetAllLogsByUserId(int userId)
     {
-        throw new NotImplementedException();
+        return _context.UserLogs.Where(x => x.UserId == userId);
     }
 
     public IEnumerable<UserLog> GetAllSuccessfulAuthenticationsByUserId(int userId)
     {
-        throw new NotImplementedException();
+        return _context.UserLogs.Where(x => x.UserId == userId && x.AuthSuccessful == true);
     }
 
     public IEnumerable<UserLog> GetAllFailedAuthenticationsByUserId(int userId)
     {
-        throw new NotImplementedException();
+        return _context.UserLogs.Where(x => x.UserId == userId && x.AuthSuccessful == false);
     }
 
 }

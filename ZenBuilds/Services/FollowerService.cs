@@ -27,6 +27,10 @@ public class FollowerService : IFollowerService
 
     }
 
+    /// <summary>
+    /// user follows another user by creating a new follower
+    ///     does not need to be accepted by the user being followed
+    /// </summary>
     public void AddFollow(FollowRequest followRequest)
     {
         if (!_context.Users.Any(x => x.Id == followRequest.Follower_UserId))
@@ -40,6 +44,10 @@ public class FollowerService : IFollowerService
         _context.SaveChanges();
     }
 
+    /// <summary>
+    /// user which is the one following another user:
+    ///     removes the follow
+    /// </summary>
     public void RemoveFollow(FollowRequest followRequest)
     {
         var follower = GetFollower(followRequest.User_UserId, followRequest.Follower_UserId);
@@ -48,13 +56,19 @@ public class FollowerService : IFollowerService
         _context.SaveChanges();
     }
     
-    // get a users followers
+    /// <summary>
+    /// get a users followers
+    ///     by returning every follower where the Follower_UserId value equals the given users Id
+    /// </summary>
     public IEnumerable<Follower> GetUserFollowers(int follower_UserId)
     {
         return _context.Followers.Where(x => x.Follower_UserId == follower_UserId);
     }
 
-    // get all users which the user is following
+    /// <summary>
+    /// get the users following list
+    ///     by returning every follower where the User_UserId value equals the given users Id
+    /// </summary>
     public IEnumerable<Follower> GetUserFollowing(int user_UserId)
     {
         return _context.Followers.Where(x => x.User_UserId == user_UserId);

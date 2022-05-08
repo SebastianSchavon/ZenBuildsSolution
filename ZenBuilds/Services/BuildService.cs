@@ -1,6 +1,5 @@
-﻿namespace ZenBuilds.Services
+﻿namespace ZenBuilds.Services;
+
+public class BuildService
 {
-    public class BuildService
-    {
-    }
 }
