@@ -65,6 +65,9 @@ public class UserService : IUserService
 
     // use in JwtMiddleware
     public User GetById(int id)
-        => _context.Users.Find(id);
+    {
+        return _context.Users.Find(id);
+    }
+
 
 }
