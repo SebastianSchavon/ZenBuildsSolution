@@ -8,6 +8,10 @@ namespace ZenBuilds.Services;
 /// <summary>
 /// builds use composite key as primary key
 ///     referenced with the id of the user who created the build, followed by the database auto incremented id
+///     
+/// get builds come with two options:
+///     get the builds in order of most likes (will be app standard)
+///     get the builds in order of published date
 /// </summary>
 public interface IBuildService
 {
@@ -18,9 +22,10 @@ public interface IBuildService
 
     IEnumerable<Build> GetAllBuilds();
     IEnumerable<Build> GetAllBuildsLatest();
+    IEnumerable<Build> GetBuildsByUserId(int userId);
+    IEnumerable<Build> GetBuildsByUserIdLatest(int userId);
     IEnumerable<Build> GetFollowingBuilds(List<Follower> following);
     IEnumerable<Build> GetFollowingBuildsLatest(List<Follower> following);
-    IEnumerable<Build> GetBuildsByUserId(int userId);
 
     Build GetPostById(int userId, int id);
 }
@@ -85,7 +90,22 @@ public class BuildService : IBuildService
             }
         }
 
-        return builds;
+        return builds.OrderBy(x => x.Likes);
+    }
+
+    public IEnumerable<Build> GetFollowingBuildsLatest(List<Follower> following)
+    {
+        var builds = new List<Build>();
+
+        foreach (var follower in following)
+        {
+            foreach (var build in GetBuildsByUserId(follower.Follower_UserId))
+            {
+                builds.Add(build);
+            }
+        }
+
+        return builds.OrderBy(x => x.Published);
     }
 
     public void LikeBuild(int userId, int id)
@@ -110,4 +130,6 @@ public class BuildService : IBuildService
         return build;
 
     }
+
+
 }

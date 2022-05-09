@@ -1,6 +1,5 @@
-﻿namespace ZenBuilds.Controllers
+﻿namespace ZenBuilds.Controllers;
+
+public class UserLogsController
 {
-    public class UserLogsController
-    {
-    }
 }

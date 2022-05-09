@@ -12,6 +12,7 @@ public interface IUserService
     void Register(RegisterRequest request);
     void Update(int userId, UpdateRequest request);
     void Delete(int userId);
+    void UpdateZenPoints();
     IEnumerable<User> GetAllUsers();
     User GetUserByUsername(string username);
     User GetUserById(int id);
@@ -119,6 +120,20 @@ public class UserService : IUserService
         _context.Users.Remove(user);
         _context.SaveChanges();
     }
+
+    /// <summary>
+    /// zenpoints amount equals all likes of every build by a user
+    ///     calculate and update zenpoints on each user 
+    /// </summary>
+    public void UpdateZenPoints()
+    {
+        foreach (var user in _context.Users)
+        {
+            user.ZenPoints = _context.Builds.Where(x => x.UserId == user.Id).Sum(x => x.Likes);
+            _context.SaveChanges();
+        }
+    }
+
     /// <summary>
     /// use as leaderbord
     ///     users with the most zenpoints on top
@@ -135,7 +150,7 @@ public class UserService : IUserService
             throw new KeyNotFoundException("User not found");
         return user;
     }
-
+    
     // helper method
     public User GetUserById(int id)
     {
