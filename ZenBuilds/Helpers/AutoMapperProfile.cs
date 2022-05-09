@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using ZenBuilds.Entities;
+using ZenBuilds.Models.Builds;
 using ZenBuilds.Models.Followers;
 using ZenBuilds.Models.UserLogs;
 using ZenBuilds.Models.Users;
@@ -18,6 +19,7 @@ public class AutoMapperProfile : Profile
         CreateMap<User, AuthenticateResponse>();
         CreateMap<FollowRequest, Follower>();
         CreateMap<UpdateRequest, User>();
+        CreateMap<CreateBuildRequest, Build>();
         
     }
     

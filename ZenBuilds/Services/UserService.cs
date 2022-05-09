@@ -13,6 +13,7 @@ public interface IUserService
     void Update(int userId, UpdateRequest request);
     void Delete(int userId);
     IEnumerable<User> GetAllUsers();
+    User GetUserByUsername(string username);
     User GetUserById(int id);
 }
 
@@ -83,7 +84,7 @@ public class UserService : IUserService
     ///     the old password needs to be verified
     ///     
     ///         if the old password is verified:
-    ///             hash and store new password to user
+    ///             hash and store new password to user in database
     ///     
     /// if username or email is being changed: 
     ///     check if new username or email is already taken
@@ -118,17 +119,29 @@ public class UserService : IUserService
         _context.Users.Remove(user);
         _context.SaveChanges();
     }
-
+    /// <summary>
+    /// use as leaderbord
+    ///     users with the most zenpoints on top
+    /// </summary>
     public IEnumerable<User> GetAllUsers()
     {
-        return _context.Users;
+        return _context.Users.OrderBy(x => x.ZenPoints);
+    }
+
+    public User GetUserByUsername(string username)
+    {
+        var user = _context.Users.SingleOrDefault(x => x.Username == username);
+        if (user == null)
+            throw new KeyNotFoundException("User not found");
+        return user;
     }
 
     // helper method
     public User GetUserById(int id)
     {
-        return _context.Users.Find(id);
+        var user = _context.Users.Find(id);
+        if (user == null)
+            throw new KeyNotFoundException("User not found");
+        return user;
     }
-
-
 }

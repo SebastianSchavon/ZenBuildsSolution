@@ -17,7 +17,7 @@ public interface IUserLogService
 
 /// <summary>
 /// logs and displays all authentication tries when a valid username is being used
-/// properties of userId, datetime, ip-adress and if the authentication was succesful or not is beging stored
+/// properties of userId, datetime, ip-adress and if the authentication was succesful or not, is beging stored
 /// </summary>
 public class UserLogService : IUserLogService
 {

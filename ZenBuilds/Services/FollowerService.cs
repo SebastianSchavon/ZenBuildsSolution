@@ -5,10 +5,15 @@ using ZenBuilds.Models.Followers;
 
 namespace ZenBuilds.Services;
 
+/// <summary>
+/// follower use composite key as primary key
+///     referenced with the id of the user who is following, followed by the id of the user who is followed
+/// </summary>
 public interface IFollowerService
 {
     void AddFollow(FollowRequest followRequest);
     void RemoveFollow(FollowRequest followRequest);
+
     IEnumerable<Follower> GetUserFollowers(int follower_UserId);
     IEnumerable<Follower> GetUserFollowing(int user_UserId);
     Follower GetFollower(int user_UserId, int follower_UserId);
@@ -29,7 +34,7 @@ public class FollowerService : IFollowerService
 
     /// <summary>
     /// user follows another user by creating a new follower
-    ///     does not need to be accepted by the user being followed
+    ///     does not need to be accepted by the user receiving the follow
     /// </summary>
     public void AddFollow(FollowRequest followRequest)
     {
@@ -55,23 +60,27 @@ public class FollowerService : IFollowerService
         _context.Followers.Remove(follower);
         _context.SaveChanges();
     }
-    
+
     /// <summary>
-    /// get a users followers
+    /// get a users follower list
     ///     by returning every follower where the Follower_UserId value equals the given users Id
+    ///     
+    /// represents all the users that follow the user
     /// </summary>
     public IEnumerable<Follower> GetUserFollowers(int follower_UserId)
     {
-        return _context.Followers.Where(x => x.Follower_UserId == follower_UserId);
+        return _context.Followers.Where(x => x.Follower_UserId == follower_UserId).OrderBy(x => x.Follower_User.Username);
     }
 
     /// <summary>
-    /// get the users following list
+    /// get a users following list 
     ///     by returning every follower where the User_UserId value equals the given users Id
+    ///     
+    /// represents all the users the user is following
     /// </summary>
     public IEnumerable<Follower> GetUserFollowing(int user_UserId)
     {
-        return _context.Followers.Where(x => x.User_UserId == user_UserId);
+        return _context.Followers.Where(x => x.User_UserId == user_UserId).OrderBy(x => x.Follower_User.Username); ;
     }
 
     public Follower GetFollower(int user_UserId, int follower_UserId)
@@ -80,7 +89,7 @@ public class FollowerService : IFollowerService
         
         // will the exception be thrown all the way up to the followerController?
         if(follower == null)
-            throw new Exception("Cant find following");
+            throw new KeyNotFoundException("Follower not found");
 
         return follower;
         
