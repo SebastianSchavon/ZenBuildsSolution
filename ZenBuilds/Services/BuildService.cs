@@ -24,8 +24,8 @@ public interface IBuildService
     IEnumerable<Build> GetAllBuildsLatest();
     IEnumerable<Build> GetBuildsByUserId(int userId);
     IEnumerable<Build> GetBuildsByUserIdLatest(int userId);
-    IEnumerable<Build> GetFollowingBuilds(List<Follower> following);
-    IEnumerable<Build> GetFollowingBuildsLatest(List<Follower> following);
+    IEnumerable<Build> GetFollowingBuilds(int userId);
+    IEnumerable<Build> GetFollowingBuildsLatest(int userId);
 
     Build GetPostById(int userId, int id);
 }
@@ -34,11 +34,16 @@ public class BuildService : IBuildService
 {
     private DataContext _context;
     private readonly IMapper _mapper;
+    private IFollowerService _followerService;
+    private IUserService _userService;
 
-    public BuildService(DataContext context, IMapper mapper)
+    public BuildService(DataContext context, IMapper mapper, 
+        IFollowerService followerService, IUserService userService)
     {
         _context = context;
         _mapper = mapper;
+        _followerService = followerService;
+        _userService = userService;
     }
 
     public void CreateBuild(CreateBuildRequest createBuildRequest)
@@ -58,31 +63,67 @@ public class BuildService : IBuildService
         _context.SaveChanges();
     }
 
+    /// <summary>
+    /// returns the global feed: 
+    ///     global feed:
+    ///         all builds by every user
+    ///         
+    /// order:
+    ///     builds with most likes on top
+    /// </summary>
     public IEnumerable<Build> GetAllBuilds()
     {
         return _context.Builds.OrderBy(x => x.Likes);
     }
 
+    /// <summary>
+    /// returns the global feed: 
+    ///     global feed:
+    ///         all builds by every user
+    ///         
+    /// order:
+    ///     builds published latest on top
+    /// </summary>
     public IEnumerable<Build> GetAllBuildsLatest()
     {
         return _context.Builds.OrderBy(x => x.Published);
     }
 
+    /// <summary>
+    /// returns every build posted by a singel user: 
+    ///         
+    /// order:
+    ///     builds with most likes on top
+    /// </summary>
     public IEnumerable<Build> GetBuildsByUserId(int userId)
     {
         return _context.Builds.Where(x => x.UserId == userId).OrderBy(x => x.Likes);
     }
 
+    /// <summary>
+    /// returns every build posted by a singel user: 
+    ///         
+    /// order:
+    ///     builds published latest on top
+    /// </summary>
     public IEnumerable<Build> GetBuildsByUserIdLatest(int userId)
     {
         return _context.Builds.Where(x => x.UserId == userId).OrderBy(x => x.Published);
     }
 
-    public IEnumerable<Build> GetFollowingBuilds(List<Follower> following)
+    /// <summary>
+    /// returns the private feed: 
+    ///     private feed:
+    ///         all builds posted by users the current user is following
+    ///         
+    /// order:
+    ///     builds with most likes on top
+    /// </summary>
+    public IEnumerable<Build> GetFollowingBuilds(int userId)
     {
         var builds = new List<Build>();
 
-        foreach(var follower in following)
+        foreach(var follower in _followerService.GetUserFollowing(userId))
         {
             foreach(var build in GetBuildsByUserId(follower.Follower_UserId))
             {
@@ -93,11 +134,19 @@ public class BuildService : IBuildService
         return builds.OrderBy(x => x.Likes);
     }
 
-    public IEnumerable<Build> GetFollowingBuildsLatest(List<Follower> following)
+    /// <summary>
+    /// returns the private feed: 
+    ///     private feed:
+    ///         all builds posted by users the current user is following
+    ///         
+    /// order:
+    ///     builds published latest on top
+    /// </summary>
+    public IEnumerable<Build> GetFollowingBuildsLatest(int userId)
     {
         var builds = new List<Build>();
 
-        foreach (var follower in following)
+        foreach (var follower in _followerService.GetUserFollowing(userId))
         {
             foreach (var build in GetBuildsByUserId(follower.Follower_UserId))
             {
@@ -108,16 +157,23 @@ public class BuildService : IBuildService
         return builds.OrderBy(x => x.Published);
     }
 
+    /// <summary>
+    /// like build
+    /// </summary>
     public void LikeBuild(int userId, int id)
     {
         GetPostById(userId, id).Likes++;
         _context.SaveChanges();
+
+        _userService.UpdateZenPoints(userId);
     }
 
     public void RemoveLike(int userId, int id)
     {
         GetPostById(userId, id).Likes--;
         _context.SaveChanges();
+
+        _userService.UpdateZenPoints(userId);
     }
 
     public Build GetPostById(int userId, int id)

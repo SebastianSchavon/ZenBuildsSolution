@@ -12,10 +12,13 @@ public interface IUserService
     void Register(RegisterRequest request);
     void Update(int userId, UpdateRequest request);
     void Delete(int userId);
-    void UpdateZenPoints();
+
     IEnumerable<User> GetAllUsers();
     User GetUserByUsername(string username);
+
     User GetUserById(int id);
+    void UpdateZenPoints(int userId);
+    void UpdateAllZenPoints();
 }
 
 public class UserService : IUserService
@@ -114,24 +117,11 @@ public class UserService : IUserService
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Delete(int userId)
     {
-        var user = GetUserById(id);
+        var user = GetUserById(userId);
         _context.Users.Remove(user);
         _context.SaveChanges();
-    }
-
-    /// <summary>
-    /// zenpoints amount equals all likes of every build by a user
-    ///     calculate and update zenpoints on each user 
-    /// </summary>
-    public void UpdateZenPoints()
-    {
-        foreach (var user in _context.Users)
-        {
-            user.ZenPoints = _context.Builds.Where(x => x.UserId == user.Id).Sum(x => x.Likes);
-            _context.SaveChanges();
-        }
     }
 
     /// <summary>
@@ -150,13 +140,39 @@ public class UserService : IUserService
             throw new KeyNotFoundException("User not found");
         return user;
     }
-    
-    // helper method
+
+    // helper methods
     public User GetUserById(int id)
     {
         var user = _context.Users.Find(id);
         if (user == null)
             throw new KeyNotFoundException("User not found");
         return user;
+    }
+
+    /// <summary>
+    /// zenpoints amount equals all likes of every build by a user
+    ///     calculate and update zenpoints on single user
+    /// </summary>
+    public void UpdateZenPoints(int userId)
+    {
+        var user = GetUserById(userId);
+
+        user.ZenPoints = _context.Builds.Where(x => x.UserId == userId).Sum(x => x.Likes);
+
+        _context.SaveChanges();
+    }
+
+    /// <summary>
+    /// zenpoints amount equals all likes of every build by a user
+    ///     calculate and update zenpoints on each user 
+    /// </summary>
+    public void UpdateAllZenPoints()
+    {
+        foreach (var user in _context.Users)
+        {
+            user.ZenPoints = _context.Builds.Where(x => x.UserId == user.Id).Sum(x => x.Likes);
+            _context.SaveChanges();
+        }
     }
 }

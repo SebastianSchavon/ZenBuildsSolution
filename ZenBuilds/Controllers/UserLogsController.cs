@@ -1,5 +1,18 @@
-﻿namespace ZenBuilds.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using ZenBuilds.Authorization;
+using ZenBuilds.Services;
 
-public class UserLogsController
+namespace ZenBuilds.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+[Authorize]
+public class UserLogsController : ControllerBase
 {
+    private readonly IUserLogService _userLogService;
+
+    public UserLogsController(IUserLogService userLogService)
+    {
+        _userLogService = userLogService;
+    }
 }
