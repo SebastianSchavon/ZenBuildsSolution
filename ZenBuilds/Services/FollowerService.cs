@@ -83,6 +83,7 @@ public class FollowerService : IFollowerService
         return _context.Followers.Where(x => x.User_UserId == user_UserId).OrderBy(x => x.Follower_User.Username); ;
     }
 
+    // helper method
     public Follower GetFollower(int user_UserId, int follower_UserId)
     {
         var follower = _context.Followers.Find(user_UserId, follower_UserId);
