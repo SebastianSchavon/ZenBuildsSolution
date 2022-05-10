@@ -43,9 +43,15 @@ public class DataContext : DbContext
             .WithMany(x => x.Following)
             .HasForeignKey(x => x.User_UserId);
 
+        // what does DeleteBehavior do?
+        builder.Entity<User>()
+            .HasMany(x => x.Builds)
+            .WithOne(x => x.User)
+            .OnDelete(DeleteBehavior.Restrict);
 
-
-
+        builder.Entity<Build>()
+            .HasMany(x => x.Likes)
+            .WithMany(x => x.LikedBuilds);
 
         //// setting follower relations to resolve problem of not having two follower-collections in user entity
         //builder.Entity<Follower>()

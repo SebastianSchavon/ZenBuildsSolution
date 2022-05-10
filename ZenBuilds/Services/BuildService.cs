@@ -5,14 +5,6 @@ using ZenBuilds.Models.Builds;
 
 namespace ZenBuilds.Services;
 
-/// <summary>
-/// builds use composite key as primary key
-///     referenced with the id of the user who created the build, followed by the database auto incremented id
-///     
-/// get builds come with two options:
-///     get the builds in order of most likes (will be app standard)
-///     get the builds in order of published date
-/// </summary>
 public interface IBuildService
 {
     void CreateBuild(CreateBuildRequest createBuildRequest);
@@ -62,7 +54,15 @@ public class BuildService : IBuildService
     }
 
     /// <summary>
-    /// like build
+    /// toggle like on build:
+    ///     if user exists in liked list of users
+    ///         remove user from list
+    ///     if user does not exist in liked list of users
+    ///         add user to list
+    ///         
+    /// likescount property equals liked list of users count
+    /// 
+    /// update zenpoints of user who recieved like
     /// </summary>
     public void ToggleBuildLike(ToggleLikeRequest toggleLikeRequest)
     {

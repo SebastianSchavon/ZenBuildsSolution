@@ -13,6 +13,9 @@ public class User
     //public string Email { get; set; }
     public DateTime RegisterDate { get; set; }
     public List<Build> Builds { get; set; }
+    public List<Build> LikedBuilds { get; set; }
+    public List<UserLog> UserLogs { get; set; }
+    
     public List<Follower> Followers { get; set; }
     public List<Follower> Following { get; set; }
 

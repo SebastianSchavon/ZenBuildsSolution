@@ -11,7 +11,7 @@ var CustomCorsPolicy = "_customCorsPolicy";
 {
     var services = builder.Services;
 
-    services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("UserDataBase")));
+    services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ZenBuildsDataBase")));
 
     // limit app access to specific origin
     services.AddCors(options =>
@@ -25,7 +25,7 @@ var CustomCorsPolicy = "_customCorsPolicy";
             });
     });
 
-    services.AddControllers();
+    //services.AddControllers();
 
     // enables enum converting
     services.AddControllers()
@@ -45,6 +45,9 @@ var CustomCorsPolicy = "_customCorsPolicy";
     // configure DI (dependancy injections) for application services
     services.AddScoped<IJwtUtils, JwtUtils>();
 
+    services.AddScoped<IBuildService, BuildService>();
+    services.AddScoped<IFollowerService, FollowerService>();
+    services.AddScoped<IUserLogService, UserLogService>();
     services.AddScoped<IUserService, UserService>();
 
 

@@ -17,7 +17,7 @@ public class AutoMapperProfile : Profile
         // specify object mappings
         CreateMap<LogAuthenticateRequest, UserLog>();
         CreateMap<User, AuthenticateResponse>();
-        CreateMap<FollowRequest, Follower>();
+        CreateMap<FollowCompositeKey, Follower>();
         CreateMap<UpdateRequest, User>();
         CreateMap<CreateBuildRequest, Build>();
         

@@ -18,11 +18,11 @@ public class FollowersController : ControllerBase
     }
 
     [HttpPost("addFollow")]
-    public IActionResult AddFollow(FollowRequest followRequest)
+    public IActionResult AddFollow(FollowCompositeKey followCompositeKey)
     {
         try
         {
-            _followerService.AddFollow(followRequest);
+            _followerService.AddFollow(followCompositeKey);
             return Ok(new { message = "Follow created" });
         }
         catch (KeyNotFoundException ex)
@@ -33,11 +33,11 @@ public class FollowersController : ControllerBase
     }
 
     [HttpPost("removeFollow")]
-    public IActionResult RemoveFollow(FollowRequest followRequest)
+    public IActionResult RemoveFollow(FollowCompositeKey followCompositeKey)
     {
         try
         {
-            _followerService.RemoveFollow(followRequest);
+            _followerService.RemoveFollow(followCompositeKey);
             return Ok(new { message = "Removed follow" });
         }
         catch (KeyNotFoundException ex)
