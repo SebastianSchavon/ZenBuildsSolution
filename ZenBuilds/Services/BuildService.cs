@@ -16,9 +16,8 @@ namespace ZenBuilds.Services;
 public interface IBuildService
 {
     void CreateBuild(CreateBuildRequest createBuildRequest);
-    void DeleteBuild(int userId, int id);
-    void LikeBuild(int userId, int id);
-    void RemoveLike(int userId, int id);
+    void DeleteBuild(BuildCompositeKey buildCompositeKey);
+    void ToggleBuildLike(ToggleLikeRequest toggleLikeRequest);
 
     IEnumerable<Build> GetAllBuilds();
     IEnumerable<Build> GetAllBuildsLatest();
@@ -27,7 +26,7 @@ public interface IBuildService
     IEnumerable<Build> GetFollowingBuilds(int userId);
     IEnumerable<Build> GetFollowingBuildsLatest(int userId);
 
-    Build GetPostById(int userId, int id);
+    Build GetBuildById(BuildCompositeKey buildCompositeKey);
 }
 
 public class BuildService : IBuildService
@@ -51,16 +50,35 @@ public class BuildService : IBuildService
         var build = _mapper.Map<Build>(createBuildRequest);
 
         build.Published = DateTime.Now;
-        build.Likes = 0;
 
         _context.Builds.Add(build);
         _context.SaveChanges();
     }
 
-    public void DeleteBuild(int userId, int id)
+    public void DeleteBuild(BuildCompositeKey buildCompositeKey)
     {
-        _context.Builds.Remove(GetPostById(userId, id));
+        _context.Builds.Remove(GetBuildById(buildCompositeKey));
         _context.SaveChanges();
+    }
+
+    /// <summary>
+    /// like build
+    /// </summary>
+    public void ToggleBuildLike(ToggleLikeRequest toggleLikeRequest)
+    {
+        var currentUser = _userService.GetUserById(toggleLikeRequest.Current_UserId);
+        var build = GetBuildById(toggleLikeRequest.BuildId);
+
+        if (!build.Likes.Contains(currentUser))
+            build.Likes.Add(currentUser);
+        else
+            build.Likes.Remove(currentUser);
+
+        build.LikesCount = build.Likes.Count;
+
+        _context.SaveChanges();
+
+        _userService.UpdateZenPoints(toggleLikeRequest.BuildId.UserId);
     }
 
     /// <summary>
@@ -157,28 +175,9 @@ public class BuildService : IBuildService
         return builds.OrderBy(x => x.Published);
     }
 
-    /// <summary>
-    /// like build
-    /// </summary>
-    public void LikeBuild(int userId, int id)
+    public Build GetBuildById(BuildCompositeKey buildCompositeKey)
     {
-        GetPostById(userId, id).Likes++;
-        _context.SaveChanges();
-
-        _userService.UpdateZenPoints(userId);
-    }
-
-    public void RemoveLike(int userId, int id)
-    {
-        GetPostById(userId, id).Likes--;
-        _context.SaveChanges();
-
-        _userService.UpdateZenPoints(userId);
-    }
-
-    public Build GetPostById(int userId, int id)
-    {
-        var build = _context.Builds.Find(id, userId);
+        var build = _context.Builds.Find(buildCompositeKey.UserId, buildCompositeKey.Id);
 
         if (build == null)
             throw new KeyNotFoundException("Build not found");
@@ -186,6 +185,5 @@ public class BuildService : IBuildService
         return build;
 
     }
-
 
 }

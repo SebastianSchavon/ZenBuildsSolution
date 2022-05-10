@@ -32,7 +32,6 @@ public class DataContext : DbContext
         builder.Entity<Build>().HasKey(x => new { x.UserId, x.Id });
         builder.Entity<UserLog>().HasKey(x => new { x.UserId, x.Id });
 
-        // setting follower relations to resolve problem of not having two follower-collections in user entity
         builder.Entity<Follower>()
             .HasOne(x => x.Follower_User)
             .WithMany(x => x.Followers)

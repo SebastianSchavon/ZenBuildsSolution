@@ -34,13 +34,15 @@ public class UserLogService : IUserLogService
     {
         var userLog = _mapper.Map<UserLog>(logAuthenticateRequest);
 
+        userLog.Date = DateTime.Now;
+
         _context.UserLogs.Add(userLog);
         _context.SaveChanges();
     }
 
     public IEnumerable<UserLog> GetAllLogs()
     {
-        return _context.UserLogs;
+        return _context.UserLogs.OrderBy(x => x.Date);
     }
 
     public IEnumerable<UserLog> GetAllLogsByUserId(int userId)

@@ -34,11 +34,11 @@ public class BuildsController : ControllerBase
 
 
     [HttpDelete("delete")]
-    public IActionResult DeleteBuild(int userId, int id)
+    public IActionResult DeleteBuild(BuildCompositeKey buildCompositeKey)
     {
         try
         {
-            _buildService.DeleteBuild(userId, id);
+            _buildService.DeleteBuild(buildCompositeKey);
             return Ok(new { message = "Build deleted" });
         }
         catch (KeyNotFoundException ex)
@@ -89,13 +89,13 @@ public class BuildsController : ControllerBase
         return Ok(buildsByUserId);
     }
 
-    [HttpPatch("likeBuild")]
-    public IActionResult LikeBuild(int userId, int id)
+    [HttpPatch("toggleBuildLike")]
+    public IActionResult ToggleBuildLike(ToggleLikeRequest toggleLikeRequest)
     {
         try
         {
-            _buildService.LikeBuild(userId, id);
-            return Ok(new { message = "Build recieved like" });
+            _buildService.ToggleBuildLike(toggleLikeRequest);
+            return Ok(new { message = "Like toggled" });
         }
         catch (KeyNotFoundException ex)
         {
@@ -103,26 +103,12 @@ public class BuildsController : ControllerBase
         }
     }
 
-    [HttpPatch("removeLike")]
-    public IActionResult RemoveLike(int userId, int id)
+    [HttpPatch("getBuildById")]
+    public IActionResult GetBuildById(BuildCompositeKey buildCompositeKey)
     {
         try
         {
-            _buildService.RemoveLike(userId, id);
-            return Ok(new { message = "Like removed" });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
-
-    [HttpPatch("getPostById")]
-    public IActionResult Update(int userId, int id)
-    {
-        try
-        {
-            var build = _buildService.GetPostById(userId, id);
+            var build = _buildService.GetBuildById(buildCompositeKey);
             return Ok(build);
         }
         catch (KeyNotFoundException ex)

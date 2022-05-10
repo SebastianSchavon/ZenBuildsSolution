@@ -58,4 +58,5 @@ public class UserLogsController : ControllerBase
         var allFailedAuthenticationsByUserId = _userLogService.GetAllFailedAuthenticationsByUserId(userId);
         return Ok(allFailedAuthenticationsByUserId);
     }
+
 }

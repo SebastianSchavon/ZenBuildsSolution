@@ -72,8 +72,8 @@ public class UserService : IUserService
         if (_context.Users.Any(x => x.Username == request.Username))
             throw new Exception("Username already taken");
 
-        if (_context.Users.Any(x => x.Email == request.Email))
-            throw new Exception("Email already taken");
+        //if (_context.Users.Any(x => x.Email == request.Email))
+        //    throw new Exception("Email already taken");
 
         var user = _mapper.Map<User>(request);
 
@@ -108,8 +108,8 @@ public class UserService : IUserService
         if (_context.Users.Any(x => x.Username == request.Username))
             throw new Exception("Username already taken");
 
-        if (_context.Users.Any(x => x.Email == request.Email))
-            throw new Exception("Email already taken");
+        //if (_context.Users.Any(x => x.Email == request.Email))
+        //    throw new Exception("Email already taken");
 
         _mapper.Map(request, user);
 
@@ -158,7 +158,7 @@ public class UserService : IUserService
     {
         var user = GetUserById(userId);
 
-        user.ZenPoints = _context.Builds.Where(x => x.UserId == userId).Sum(x => x.Likes);
+        user.ZenPoints = _context.Builds.Where(x => x.UserId == userId).Sum(x => x.LikesCount);
 
         _context.SaveChanges();
     }
@@ -171,7 +171,7 @@ public class UserService : IUserService
     {
         foreach (var user in _context.Users)
         {
-            user.ZenPoints = _context.Builds.Where(x => x.UserId == user.Id).Sum(x => x.Likes);
+            user.ZenPoints = _context.Builds.Where(x => x.UserId == user.Id).Sum(x => x.LikesCount);
             _context.SaveChanges();
         }
     }

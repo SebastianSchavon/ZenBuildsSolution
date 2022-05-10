@@ -10,7 +10,8 @@ public class Build
     public int UserId { get; set; }
     public string Title { get; set; }
     public string Content { get; set; }
-    public int Likes { get; set; }
+    public int LikesCount { get; set; }
+    public List<User> Likes { get; set; }
     public DateTime Published { get; set; }
     public Race PlayerRace { get; set; }
     public Race OpponentRace { get; set; }

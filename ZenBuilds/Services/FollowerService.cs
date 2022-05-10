@@ -11,12 +11,12 @@ namespace ZenBuilds.Services;
 /// </summary>
 public interface IFollowerService
 {
-    void AddFollow(FollowRequest followRequest);
-    void RemoveFollow(FollowRequest followRequest);
+    void AddFollow(FollowCompositeKey followCompositeKey);
+    void RemoveFollow(FollowCompositeKey followCompositeKey);
 
     IEnumerable<Follower> GetUserFollowers(int follower_UserId);
     IEnumerable<Follower> GetUserFollowing(int user_UserId);
-    Follower GetFollower(int user_UserId, int follower_UserId);
+    Follower GetFollower(FollowCompositeKey followCompositeKey);
     
 }
 
@@ -36,12 +36,12 @@ public class FollowerService : IFollowerService
     /// user follows another user by creating a new follower
     ///     does not need to be accepted by the user receiving the follow
     /// </summary>
-    public void AddFollow(FollowRequest followRequest)
+    public void AddFollow(FollowCompositeKey followCompositeKey)
     {
-        if (!_context.Users.Any(x => x.Id == followRequest.Follower_UserId))
+        if (!_context.Users.Any(x => x.Id == followCompositeKey.Follower_UserId))
             throw new Exception("The User which you are trying to follow does not exist");
 
-        var follower = _mapper.Map<Follower>(followRequest);
+        var follower = _mapper.Map<Follower>(followCompositeKey);
 
         follower.FollowDate = DateTime.Now;
 
@@ -53,9 +53,9 @@ public class FollowerService : IFollowerService
     /// user which is the one following another user:
     ///     removes the follow
     /// </summary>
-    public void RemoveFollow(FollowRequest followRequest)
+    public void RemoveFollow(FollowCompositeKey followCompositeKey)
     {
-        var follower = GetFollower(followRequest.User_UserId, followRequest.Follower_UserId);
+        var follower = GetFollower(followCompositeKey);
 
         _context.Followers.Remove(follower);
         _context.SaveChanges();
@@ -84,9 +84,9 @@ public class FollowerService : IFollowerService
     }
 
     // helper method
-    public Follower GetFollower(int user_UserId, int follower_UserId)
+    public Follower GetFollower(FollowCompositeKey followCompositeKey)
     {
-        var follower = _context.Followers.Find(user_UserId, follower_UserId);
+        var follower = _context.Followers.Find(followCompositeKey.User_UserId, followCompositeKey.Follower_UserId);
         
         // will the exception be thrown all the way up to the followerController?
         if(follower == null)
