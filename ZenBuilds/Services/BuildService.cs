@@ -7,14 +7,14 @@ namespace ZenBuilds.Services;
 
 public interface IBuildService
 {
-    void CreateBuild(CreateBuildRequest createBuildRequest);
+    void CreateBuild(int userId, CreateBuildRequest createBuildRequest);
     void DeleteBuild(BuildCompositeKey buildCompositeKey);
     void ToggleBuildLike(ToggleLikeRequest toggleLikeRequest);
 
     IEnumerable<Build> GetAllBuilds();
     IEnumerable<Build> GetAllBuildsLatest();
-    IEnumerable<Build> GetBuildsByUserId(int userId);
-    IEnumerable<Build> GetBuildsByUserIdLatest(int userId);
+    IEnumerable<Build> GetAuthenticatedUserFeed(int userId);
+    IEnumerable<Build> GetAuthenticatedUserFeedLatest(int userId);
     IEnumerable<Build> GetFollowingBuilds(int userId);
     IEnumerable<Build> GetFollowingBuildsLatest(int userId);
 
@@ -37,10 +37,11 @@ public class BuildService : IBuildService
         _userService = userService;
     }
 
-    public void CreateBuild(CreateBuildRequest createBuildRequest)
+    public void CreateBuild(int userId, CreateBuildRequest createBuildRequest)
     {
         var build = _mapper.Map<Build>(createBuildRequest);
-
+        
+        build.UserId = userId;
         build.Published = DateTime.Now;
 
         _context.Builds.Add(build);
@@ -113,7 +114,7 @@ public class BuildService : IBuildService
     /// order:
     ///     builds with most likes on top
     /// </summary>
-    public IEnumerable<Build> GetBuildsByUserId(int userId)
+    public IEnumerable<Build> GetAuthenticatedUserFeed(int userId)
     {
         return _context.Builds.Where(x => x.UserId == userId).OrderBy(x => x.Likes);
     }
@@ -124,7 +125,7 @@ public class BuildService : IBuildService
     /// order:
     ///     builds published latest on top
     /// </summary>
-    public IEnumerable<Build> GetBuildsByUserIdLatest(int userId)
+    public IEnumerable<Build> GetAuthenticatedUserFeedLatest(int userId)
     {
         return _context.Builds.Where(x => x.UserId == userId).OrderBy(x => x.Published);
     }
@@ -143,7 +144,7 @@ public class BuildService : IBuildService
 
         foreach(var follower in _followerService.GetUserFollowing(userId))
         {
-            foreach(var build in GetBuildsByUserId(follower.Follower_UserId))
+            foreach(var build in GetAuthenticatedUserFeed(follower.Follower_UserId))
             {
                 builds.Add(build);
             }
@@ -166,7 +167,7 @@ public class BuildService : IBuildService
 
         foreach (var follower in _followerService.GetUserFollowing(userId))
         {
-            foreach (var build in GetBuildsByUserId(follower.Follower_UserId))
+            foreach (var build in GetAuthenticatedUserFeed(follower.Follower_UserId))
             {
                 builds.Add(build);
             }

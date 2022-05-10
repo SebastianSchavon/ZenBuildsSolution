@@ -14,14 +14,13 @@ public class BuildsController : BaseController
         _buildService = buildService;
     }
 
-    // test: try to get an exception thrown and see difference between with or without trycatch
     [HttpPost("createBuild")]
     public IActionResult CreateBuild(CreateBuildRequest createBuildRequest)
     {
         try
         {
-            _buildService.CreateBuild(createBuildRequest);
-            return Ok(new { message = "Register success" });
+            _buildService.CreateBuild(GetAuthenticatedUserId(), createBuildRequest);
+            return Ok(new { message = "Build posted" });
         }
         catch (Exception ex)
         {
@@ -30,9 +29,15 @@ public class BuildsController : BaseController
     }
 
 
-    [HttpDelete("delete")]
-    public IActionResult DeleteBuild(BuildCompositeKey buildCompositeKey)
+    [HttpDelete("delete/{id}")]
+    public IActionResult DeleteBuild(int id)
     {
+        var buildCompositeKey = new BuildCompositeKey
+        {
+            UserId = GetAuthenticatedUserId(),
+            Id = id
+        };
+
         try
         {
             _buildService.DeleteBuild(buildCompositeKey);
@@ -58,37 +63,43 @@ public class BuildsController : BaseController
         return Ok(allBuilds);
     }
 
-    [HttpGet("getBuildsByUserId")]
-    public IActionResult GetBuildsByUserId(int userId)
+    [HttpGet("getAuthenticatedUserFeed")]
+    public IActionResult GetAuthenticatedUserFeed()
     {
-        var buildsByUserId = _buildService.GetBuildsByUserId(userId);
-        return Ok(buildsByUserId);
+        var userFeed = _buildService.GetAuthenticatedUserFeed(GetAuthenticatedUserId());
+        return Ok(userFeed);
     }
 
     [HttpGet("getBuildsByUserIdLatest")]
-    public IActionResult GetBuildsByUserIdLatest(int userId)
+    public IActionResult GetBuildsByUserIdLatest()
     {
-        var buildsByUserId = _buildService.GetBuildsByUserIdLatest(userId);
-        return Ok(buildsByUserId);
+        var userFeed = _buildService.GetAuthenticatedUserFeedLatest(GetAuthenticatedUserId());
+        return Ok(userFeed);
     }
 
     [HttpGet("getFollowingBuilds")]
-    public IActionResult GetFollowingBuilds(int userId)
+    public IActionResult GetFollowingBuilds()
     {
-        var buildsByUserId = _buildService.GetFollowingBuilds(userId);
-        return Ok(buildsByUserId);
+        var followingBuilds = _buildService.GetFollowingBuilds(GetAuthenticatedUserId());
+        return Ok(followingBuilds);
     }
 
     [HttpGet("getFollowingBuildsLatest")]
-    public IActionResult GetFollowingBuildsLatest(int userId)
+    public IActionResult GetFollowingBuildsLatest()
     {
-        var buildsByUserId = _buildService.GetFollowingBuildsLatest(userId);
-        return Ok(buildsByUserId);
+        var followingBuilds = _buildService.GetFollowingBuildsLatest(GetAuthenticatedUserId());
+        return Ok(followingBuilds);
     }
 
     [HttpPatch("toggleBuildLike")]
-    public IActionResult ToggleBuildLike(ToggleLikeRequest toggleLikeRequest)
+    public IActionResult ToggleBuildLike(BuildCompositeKey buildId)
     {
+        var toggleLikeRequest = new ToggleLikeRequest
+        {
+            Current_UserId = GetAuthenticatedUserId(),
+            BuildId = buildId
+        };
+
         try
         {
             _buildService.ToggleBuildLike(toggleLikeRequest);
@@ -100,7 +111,7 @@ public class BuildsController : BaseController
         }
     }
 
-    [HttpPatch("getBuildById")]
+    [HttpGet("getBuildById")]
     public IActionResult GetBuildById(BuildCompositeKey buildCompositeKey)
     {
         try

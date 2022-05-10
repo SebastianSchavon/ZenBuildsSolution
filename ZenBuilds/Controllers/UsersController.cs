@@ -33,27 +33,23 @@ public class UsersController : BaseController
     [HttpPost("register")]
     public IActionResult Register(RegisterRequest registerRequest)
     {
-
-        _userService.Register(registerRequest);
-        return Ok(new { message = "Register success" });
-
-        //try
-        //{
-        //    _userService.Register(registerRequest);
-        //    return Ok(new { message = "Register success" });
-        //}
-        //catch (Exception ex)
-        //{
-        //    return BadRequest($"{0} \n {1}" ,ex.Message, ex.StackTrace);
-        //}
+        try
+        {
+            _userService.Register(registerRequest);
+            return Ok(new { message = "Register success" });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    [HttpPatch("update/{userId}")]
-    public IActionResult Update(int userId, UpdateRequest updateRequest)
+    [HttpPatch("update")]
+    public IActionResult Update(UpdateRequest updateRequest)
     {
         try
         {
-            _userService.Update(userId, updateRequest);
+            _userService.Update(GetAuthenticatedUserId(), updateRequest);
             return Ok(new { message = "Register success" });
         }
         catch (Exception ex)
@@ -62,12 +58,12 @@ public class UsersController : BaseController
         }
     }
     [AllowAnonymous]
-    [HttpDelete("delete/{userId}")]
-    public IActionResult Delete(int userId)
+    [HttpDelete("delete")]
+    public IActionResult Delete()
     {
         try
         {
-            _userService.Delete(userId);
+            _userService.Delete(GetAuthenticatedUserId());
             return Ok(new { message = "User deleted" });
         }
         catch (Exception ex)

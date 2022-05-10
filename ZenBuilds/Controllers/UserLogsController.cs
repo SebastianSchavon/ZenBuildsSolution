@@ -19,7 +19,7 @@ public class UserLogsController : BaseController
     {
         try
         {
-            _userLogService.LogAuthentication(logAuthenticateRequest);
+            _userLogService.LogAuthentication(GetAuthenticatedUserId(), logAuthenticateRequest);
             return Ok(new { message = "Authentication logged" });
         }
         catch (Exception ex)
@@ -35,24 +35,24 @@ public class UserLogsController : BaseController
         return Ok(allLogs);
     }    
 
-    [HttpGet("getAllLogsByUserId")]
-    public IActionResult GetAllLogsByUserId(int userId)
+    [HttpGet("getAuthenticatedUserLogs")]
+    public IActionResult GetAuthenticatedUserLogs()
     {
-        var allLogsByUserId = _userLogService.GetAllLogsByUserId(userId);
+        var allLogsByUserId = _userLogService.GetAuthenticatedUserLogs(GetAuthenticatedUserId());
         return Ok(allLogsByUserId);
     }    
 
-    [HttpGet("getAllSuccessfulAuthenticationsByUserId")]
-    public IActionResult GetAllSuccessfulAuthenticationsByUserId(int userId)
+    [HttpGet("getSuccessfulAuthenticatedUserLogs")]
+    public IActionResult GetSuccessfulAuthenticatedUserLogs()
     {
-        var allSuccessfulAuthenticationsByUserId = _userLogService.GetAllSuccessfulAuthenticationsByUserId(userId);
+        var allSuccessfulAuthenticationsByUserId = _userLogService.GetSuccessfulAuthenticatedUserLogs(GetAuthenticatedUserId());
         return Ok(allSuccessfulAuthenticationsByUserId);
     }
 
-    [HttpGet("getAllFailedAuthenticationsByUserId")]
-    public IActionResult GetAllFailedAuthenticationsByUserId(int userId)
+    [HttpGet("getUnsuccessfulAuthenticatedUserLogs")]
+    public IActionResult GetUnsuccessfulAuthenticatedUserLogs()
     {
-        var allFailedAuthenticationsByUserId = _userLogService.GetAllFailedAuthenticationsByUserId(userId);
+        var allFailedAuthenticationsByUserId = _userLogService.GetUnsuccessfulAuthenticatedUserLogs(GetAuthenticatedUserId());
         return Ok(allFailedAuthenticationsByUserId);
     }
 

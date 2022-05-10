@@ -7,11 +7,11 @@ namespace ZenBuilds.Services;
 
 public interface IUserLogService
 {
-    void LogAuthentication (LogAuthenticateRequest logAuthenticateRequest);
+    void LogAuthentication(int userId, LogAuthenticateRequest logAuthenticateRequest);
     IEnumerable<UserLog> GetAllLogs();
-    IEnumerable<UserLog> GetAllLogsByUserId(int userId);
-    IEnumerable<UserLog> GetAllSuccessfulAuthenticationsByUserId(int userId);
-    IEnumerable<UserLog> GetAllFailedAuthenticationsByUserId(int userId);
+    IEnumerable<UserLog> GetAuthenticatedUserLogs(int userId);
+    IEnumerable<UserLog> GetSuccessfulAuthenticatedUserLogs(int userId);
+    IEnumerable<UserLog> GetUnsuccessfulAuthenticatedUserLogs(int userId);
 
 }
 
@@ -30,10 +30,12 @@ public class UserLogService : IUserLogService
         _mapper = mapper;
     }
 
-    public void LogAuthentication(LogAuthenticateRequest logAuthenticateRequest)
+    // execute in frontend depending on what authentication response is ?
+    public void LogAuthentication(int userId, LogAuthenticateRequest logAuthenticateRequest)
     {
         var userLog = _mapper.Map<UserLog>(logAuthenticateRequest);
 
+        userLog.UserId = userId;
         userLog.Date = DateTime.Now;
 
         _context.UserLogs.Add(userLog);
@@ -45,17 +47,17 @@ public class UserLogService : IUserLogService
         return _context.UserLogs.OrderBy(x => x.Date);
     }
 
-    public IEnumerable<UserLog> GetAllLogsByUserId(int userId)
+    public IEnumerable<UserLog> GetAuthenticatedUserLogs(int userId)
     {
         return _context.UserLogs.Where(x => x.UserId == userId);
     }
 
-    public IEnumerable<UserLog> GetAllSuccessfulAuthenticationsByUserId(int userId)
+    public IEnumerable<UserLog> GetSuccessfulAuthenticatedUserLogs(int userId)
     {
         return _context.UserLogs.Where(x => x.UserId == userId && x.AuthSuccessful == true);
     }
 
-    public IEnumerable<UserLog> GetAllFailedAuthenticationsByUserId(int userId)
+    public IEnumerable<UserLog> GetUnsuccessfulAuthenticatedUserLogs(int userId)
     {
         return _context.UserLogs.Where(x => x.UserId == userId && x.AuthSuccessful == false);
     }

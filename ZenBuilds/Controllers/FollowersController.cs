@@ -19,7 +19,7 @@ public class FollowersController : BaseController
     {
         var followCompositeKey = new FollowCompositeKey
         {
-            User_UserId = GetAuthenticatedUser().Id,
+            User_UserId = GetAuthenticatedUserId(),
             Follower_UserId = follower_UserId
         };
 
@@ -40,7 +40,7 @@ public class FollowersController : BaseController
     {
         var followCompositeKey = new FollowCompositeKey
         {
-            User_UserId = GetAuthenticatedUser().Id,
+            User_UserId = GetAuthenticatedUserId(),
             Follower_UserId = follower_UserId
         };
 
