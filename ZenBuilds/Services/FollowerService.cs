@@ -41,6 +41,9 @@ public class FollowerService : IFollowerService
         if (!_context.Users.Any(x => x.Id == followCompositeKey.Follower_UserId))
             throw new Exception("The User which you are trying to follow does not exist");
 
+        if (_context.Followers.Any(x => x.User_UserId == followCompositeKey.User_UserId))
+            throw new Exception("User is already followed");
+
         var follower = _mapper.Map<Follower>(followCompositeKey);
 
         follower.FollowDate = DateTime.Now;
@@ -69,7 +72,8 @@ public class FollowerService : IFollowerService
     /// </summary>
     public IEnumerable<Follower> GetUserFollowers(int follower_UserId)
     {
-        return _context.Followers.Where(x => x.Follower_UserId == follower_UserId).OrderBy(x => x.Follower_User.Username);
+        var followers = _context.Followers.Where(x => x.Follower_UserId == follower_UserId);
+        return followers;
     }
 
     /// <summary>
@@ -95,4 +99,6 @@ public class FollowerService : IFollowerService
         return follower;
         
     }
+
+
 }

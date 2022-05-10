@@ -5,10 +5,7 @@ using ZenBuilds.Services;
 
 namespace ZenBuilds.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-[Authorize]
-public class UsersController : ControllerBase
+public class UsersController : BaseController
 {
     private IUserService _userService;
 
@@ -18,7 +15,7 @@ public class UsersController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet("authenticate")]
+    [HttpPost("authenticate")]
     public IActionResult Authenticate(AuthenticateRequest authenticateRequest)
     {
         try
@@ -33,21 +30,25 @@ public class UsersController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet("register")]
+    [HttpPost("register")]
     public IActionResult Register(RegisterRequest registerRequest)
     {
-        try
-        {
-            _userService.Register(registerRequest);
-            return Ok(new { message = "Register success" });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
+        _userService.Register(registerRequest);
+        return Ok(new { message = "Register success" });
+
+        //try
+        //{
+        //    _userService.Register(registerRequest);
+        //    return Ok(new { message = "Register success" });
+        //}
+        //catch (Exception ex)
+        //{
+        //    return BadRequest($"{0} \n {1}" ,ex.Message, ex.StackTrace);
+        //}
     }
 
-    [HttpPatch("update")]
+    [HttpPatch("update/{userId}")]
     public IActionResult Update(int userId, UpdateRequest updateRequest)
     {
         try
@@ -60,8 +61,8 @@ public class UsersController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-
-    [HttpDelete("delete")]
+    [AllowAnonymous]
+    [HttpDelete("delete/{userId}")]
     public IActionResult Delete(int userId)
     {
         try
@@ -83,7 +84,7 @@ public class UsersController : ControllerBase
         return Ok(allUsers);
     }
 
-    [HttpGet("getUserByUsername")]
+    [HttpGet("getUserByUsername/{username}")]
     public IActionResult GetUserByUsername(string username)
     {
         try

@@ -12,6 +12,7 @@ public class CreateBuildRequest
     public string Title { get; set; }
 
     [Required]
+    [DataType(DataType.MultilineText)]
     public string Content { get; set; }
 
     [Required]

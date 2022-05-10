@@ -7,7 +7,7 @@ public class User
     public int Id { get; set; }
     public string Username { get; set; }
     public int ZenPoints { get; set; }
-    public string Description { get; set; }
+    public string? Description { get; set; }
     [JsonIgnore]
     public string PasswordHash { get; set; }
     //public string Email { get; set; }

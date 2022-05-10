@@ -16,9 +16,14 @@ public class AutoMapperProfile : Profile
     {
         // specify object mappings
         CreateMap<LogAuthenticateRequest, UserLog>();
+
         CreateMap<User, AuthenticateResponse>();
-        CreateMap<FollowCompositeKey, Follower>();
+        CreateMap<RegisterRequest, User>();
+        CreateMap<AuthenticateRequest, User>();
         CreateMap<UpdateRequest, User>();
+
+        CreateMap<FollowCompositeKey, Follower>();
+
         CreateMap<CreateBuildRequest, Build>();
         
     }

@@ -79,6 +79,8 @@ public class UserService : IUserService
 
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
+        user.RegisterDate = DateTime.Now;
+
         _context.Users.Add(user);
         _context.SaveChanges();
     }
@@ -144,7 +146,7 @@ public class UserService : IUserService
     // helper methods
     public User GetUserById(int id)
     {
-        var user = _context.Users.Find(id);
+        var user = _context.Users.SingleOrDefault(x => x.Id == id);
         if (user == null)
             throw new KeyNotFoundException("User not found");
         return user;

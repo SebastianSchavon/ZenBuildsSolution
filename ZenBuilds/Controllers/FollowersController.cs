@@ -5,10 +5,7 @@ using ZenBuilds.Services;
 
 namespace ZenBuilds.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-[Authorize]
-public class FollowersController : ControllerBase
+public class FollowersController : BaseController
 {
     private IFollowerService _followerService;
 
@@ -17,24 +14,36 @@ public class FollowersController : ControllerBase
         _followerService = followerService;
     }
 
-    [HttpPost("addFollow")]
-    public IActionResult AddFollow(FollowCompositeKey followCompositeKey)
+    [HttpPost("addFollow/{follower_UserId}")]
+    public IActionResult AddFollow(int follower_UserId)
     {
+        var followCompositeKey = new FollowCompositeKey
+        {
+            User_UserId = GetAuthenticatedUser().Id,
+            Follower_UserId = follower_UserId
+        };
+
         try
         {
             _followerService.AddFollow(followCompositeKey);
             return Ok(new { message = "Follow created" });
         }
-        catch (KeyNotFoundException ex)
+        catch (Exception ex)
         {
             return NotFound(ex.Message);
         }
 
     }
 
-    [HttpPost("removeFollow")]
-    public IActionResult RemoveFollow(FollowCompositeKey followCompositeKey)
+    [HttpDelete("removeFollow/{follower_UserId}")]
+    public IActionResult RemoveFollow(int follower_UserId)
     {
+        var followCompositeKey = new FollowCompositeKey
+        {
+            User_UserId = GetAuthenticatedUser().Id,
+            Follower_UserId = follower_UserId
+        };
+
         try
         {
             _followerService.RemoveFollow(followCompositeKey);
@@ -47,7 +56,7 @@ public class FollowersController : ControllerBase
 
     }
 
-    [HttpGet("getUserFollowers")]
+    [HttpGet("getUserFollowers/{follower_UserId}")]
     public IActionResult GetUserFollowers(int follower_UserId)
     {
         var userFollowers = _followerService.GetUserFollowers(follower_UserId);
@@ -55,7 +64,7 @@ public class FollowersController : ControllerBase
 
     }
 
-    [HttpGet("getUserFollowing")]
+    [HttpGet("getUserFollowing/{user_UserId}")]
     public IActionResult GetUserFollowing(int user_UserId)
     {
         var userFollowing = _followerService.GetUserFollowing(user_UserId);

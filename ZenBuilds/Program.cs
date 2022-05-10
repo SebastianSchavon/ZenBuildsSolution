@@ -19,13 +19,14 @@ var CustomCorsPolicy = "_customCorsPolicy";
         options.AddPolicy(name: CustomCorsPolicy,
             policy =>
             {
-                policy.WithOrigins("http://localhost:3000")
+                //policy.WithOrigins("http://localhost:3000")
+                policy.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader();
             });
     });
 
-    //services.AddControllers();
+    services.AddControllers();
 
     // enables enum converting
     services.AddControllers()

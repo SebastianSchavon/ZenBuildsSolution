@@ -5,10 +5,7 @@ using ZenBuilds.Services;
 
 namespace ZenBuilds.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-[Authorize]
-public class UserLogsController : ControllerBase
+public class UserLogsController : BaseController
 {
     private readonly IUserLogService _userLogService;
 

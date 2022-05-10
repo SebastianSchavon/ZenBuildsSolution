@@ -5,10 +5,7 @@ using ZenBuilds.Services;
 
 namespace ZenBuilds.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-[Authorize]
-public class BuildsController : ControllerBase
+public class BuildsController : BaseController
 {
     private IBuildService _buildService;
 

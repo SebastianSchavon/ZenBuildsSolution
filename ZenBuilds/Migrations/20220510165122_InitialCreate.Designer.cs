@@ -12,7 +12,7 @@ using ZenBuilds.Helpers;
 namespace ZenBuilds.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220510113907_InitialCreate")]
+    [Migration("20220510165122_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,7 +105,6 @@ namespace ZenBuilds.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
