@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ZenBuilds.Entities;
 using ZenBuilds.Helpers;
 using ZenBuilds.Models.Likes;
 
@@ -6,10 +7,9 @@ namespace ZenBuilds.Services;
 
 public interface ILikeService
 {
-    void AddLike(LikeCompositeKey likeCompositeKey);
-    void RemoveLike(LikeCompositeKey likeCompositeKey);
-    void GetBuildLikes(int buildId);
-    void GetUserLikes(int userId);
+    void ToggleLike(LikeCompositeKey likeCompositeKey);
+    IEnumerable<GetLikeResponse> GetBuildLikes(int buildId);
+    IEnumerable<GetLikeResponse> GetUserLikes(int userId);
 
 }
 
@@ -25,23 +25,38 @@ public class LikeService : ILikeService
 
     }
 
-    public void AddLike(LikeCompositeKey likeCompositeKey)
+    public void ToggleLike(LikeCompositeKey likeCompositeKey)
     {
-        throw new NotImplementedException();
+        var likes = _context.Likes;
+        var like = _mapper.Map<Like>(likeCompositeKey);
+
+        if (!_context.Builds.Any(x => x.Id == likeCompositeKey.BuildId))
+            throw new Exception("No Build found");
+
+        if (likes.Any(x => x.BuildId == likeCompositeKey.BuildId) &&
+            likes.Any(x => x.UserId == likeCompositeKey.UserId))
+            likes.Remove(like);
+        else
+        {
+            like.LikeDate = DateTime.Now;
+            likes.Add(like);
+        }
+            
     }
 
-    public void RemoveLike(LikeCompositeKey likeCompositeKey)
+    public IEnumerable<GetLikeResponse> GetBuildLikes(int buildId)
     {
-        throw new NotImplementedException();
+        var likes = _context.Likes.Where(x => x.BuildId == buildId)
+            .Select(user => _mapper.Map<GetLikeResponse>(user.User.Username));
+
+        return likes;
     }
 
-    public void GetBuildLikes(int buildId)
+    public IEnumerable<GetLikeResponse> GetUserLikes(int userId)
     {
-        throw new NotImplementedException();
-    }
+        var likes = _context.Likes.Where(x => x.UserId == userId)
+            .Select(user => _mapper.Map<GetLikeResponse>(user.User.Username));
 
-    public void GetUserLikes(int userId)
-    {
-        throw new NotImplementedException();
+        return likes;
     }
 }

@@ -4,6 +4,7 @@ using AutoMapper;
 using ZenBuilds.Entities;
 using ZenBuilds.Models.Builds;
 using ZenBuilds.Models.Followers;
+using ZenBuilds.Models.Likes;
 using ZenBuilds.Models.UserLogs;
 using ZenBuilds.Models.Users;
 
@@ -26,6 +27,11 @@ public class AutoMapperProfile : Profile
         CreateMap<UpdateRequest, User>();
 
         CreateMap<Build, GetBuildResponse>();
+
+        CreateMap<Like, GetLikeResponse>();
+        CreateMap<LikeCompositeKey, Like>();
+
+
 
         CreateMap<Follower, GetFollowerResponse>()
             .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
