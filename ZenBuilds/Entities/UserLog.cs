@@ -10,5 +10,6 @@ public class UserLog
     public User User { get; set; }
     public string Ip { get; set; }
     public bool AuthSuccessful { get; set; }
+    [Column(TypeName = "SmallDateTime ")]
     public DateTime Date { get; set; }
 }

@@ -1,4 +1,6 @@
-﻿namespace ZenBuilds.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ZenBuilds.Entities;
 
 public class Follower
 {
@@ -8,5 +10,6 @@ public class Follower
     public int Follower_UserId { get; set; }
     public User Follower_User { get; set; }
 
+    [Column(TypeName = "SmallDateTime ")]
     public DateTime FollowDate { get; set; }
 }

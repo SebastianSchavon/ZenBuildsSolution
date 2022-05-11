@@ -2,6 +2,7 @@
 using ZenBuilds.Entities;
 using ZenBuilds.Helpers;
 using ZenBuilds.Models.Builds;
+using ZenBuilds.Models.Users;
 
 namespace ZenBuilds.Services;
 
@@ -11,12 +12,12 @@ public interface IBuildService
     void DeleteBuild(BuildCompositeKey buildCompositeKey);
     void ToggleBuildLike(ToggleLikeRequest toggleLikeRequest);
 
-    IEnumerable<Build> GetAllBuilds();
-    IEnumerable<Build> GetAllBuildsLatest();
-    IEnumerable<Build> GetAuthenticatedUserFeed(int userId);
-    IEnumerable<Build> GetAuthenticatedUserFeedLatest(int userId);
-    IEnumerable<Build> GetFollowingBuilds(int userId);
-    IEnumerable<Build> GetFollowingBuildsLatest(int userId);
+    IEnumerable<GetBuildResponse> GetAllBuilds();
+    IEnumerable<GetBuildResponse> GetAllBuildsLatest();
+    IEnumerable<GetBuildResponse> GetBuildsByUserId(int userId);
+    IEnumerable<GetBuildResponse> GetBuildsByUserIdLatest(int userId);
+    IEnumerable<GetBuildResponse> GetAuthenticatedUserFeed(int userId);
+    IEnumerable<GetBuildResponse> GetAuthenticatedUserFeedLatest(int userId);
 
     Build GetBuildById(BuildCompositeKey buildCompositeKey);
 }
@@ -42,7 +43,7 @@ public class BuildService : IBuildService
         var build = _mapper.Map<Build>(createBuildRequest);
         
         build.UserId = userId;
-        build.Published = DateTime.Now;
+        build.Published = DateTime.Now.Date;
 
         _context.Builds.Add(build);
         _context.SaveChanges();
@@ -70,10 +71,13 @@ public class BuildService : IBuildService
         var currentUser = _userService.GetUserById(toggleLikeRequest.Current_UserId);
         var build = GetBuildById(toggleLikeRequest.BuildId);
 
-        if (!build.Likes.Contains(currentUser))
-            build.Likes.Add(currentUser);
-        else
-            build.Likes.Remove(currentUser);
+        //var likes = _context.Builds.Find(toggleLikeRequest.BuildId.UserId, toggleLikeRequest.BuildId.Id).Likes;
+
+        
+        //if (!likes.Contains(currentUser))
+        //    likes.Add(currentUser);
+        //else
+        //    likes.Remove(currentUser);
 
         build.LikesCount = build.Likes.Count;
 
@@ -90,9 +94,10 @@ public class BuildService : IBuildService
     /// order:
     ///     builds with most likes on top
     /// </summary>
-    public IEnumerable<Build> GetAllBuilds()
+    public IEnumerable<GetBuildResponse> GetAllBuilds()
     {
-        return _context.Builds.OrderBy(x => x.Likes);
+        var builds = _context.Builds.Select(build => _mapper.Map<GetBuildResponse>(build));
+        return builds;
     }
 
     /// <summary>
@@ -103,9 +108,11 @@ public class BuildService : IBuildService
     /// order:
     ///     builds published latest on top
     /// </summary>
-    public IEnumerable<Build> GetAllBuildsLatest()
+    public IEnumerable<GetBuildResponse> GetAllBuildsLatest()
     {
-        return _context.Builds.OrderBy(x => x.Published);
+        var builds = _context.Builds.Select(build => _mapper.Map<GetBuildResponse>(build));
+
+        return builds.OrderBy(x => x.Published);
     }
 
     /// <summary>
@@ -114,9 +121,11 @@ public class BuildService : IBuildService
     /// order:
     ///     builds with most likes on top
     /// </summary>
-    public IEnumerable<Build> GetAuthenticatedUserFeed(int userId)
+    public IEnumerable<GetBuildResponse> GetBuildsByUserId(int userId)
     {
-        return _context.Builds.Where(x => x.UserId == userId).OrderBy(x => x.Likes);
+        var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
+
+        return builds.OrderBy(x => x.LikesCount);
     }
 
     /// <summary>
@@ -125,9 +134,11 @@ public class BuildService : IBuildService
     /// order:
     ///     builds published latest on top
     /// </summary>
-    public IEnumerable<Build> GetAuthenticatedUserFeedLatest(int userId)
+    public IEnumerable<GetBuildResponse> GetBuildsByUserIdLatest(int userId)
     {
-        return _context.Builds.Where(x => x.UserId == userId).OrderBy(x => x.Published);
+        var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
+
+        return builds.OrderBy(x => x.Published);
     }
 
     /// <summary>
@@ -138,19 +149,19 @@ public class BuildService : IBuildService
     /// order:
     ///     builds with most likes on top
     /// </summary>
-    public IEnumerable<Build> GetFollowingBuilds(int userId)
+    public IEnumerable<GetBuildResponse> GetAuthenticatedUserFeed(int userId)
     {
-        var builds = new List<Build>();
+        var builds = new List<GetBuildResponse>();
 
         foreach(var follower in _followerService.GetUserFollowing(userId))
         {
-            foreach(var build in GetAuthenticatedUserFeed(follower.Follower_UserId))
+            foreach(var build in GetBuildsByUserId(follower.Id))
             {
                 builds.Add(build);
             }
         }
 
-        return builds.OrderBy(x => x.Likes);
+        return builds.OrderBy(x => x.LikesCount);
     }
 
     /// <summary>
@@ -161,13 +172,13 @@ public class BuildService : IBuildService
     /// order:
     ///     builds published latest on top
     /// </summary>
-    public IEnumerable<Build> GetFollowingBuildsLatest(int userId)
+    public IEnumerable<GetBuildResponse> GetAuthenticatedUserFeedLatest(int userId)
     {
-        var builds = new List<Build>();
+        var builds = new List<GetBuildResponse>();
 
         foreach (var follower in _followerService.GetUserFollowing(userId))
         {
-            foreach (var build in GetAuthenticatedUserFeed(follower.Follower_UserId))
+            foreach (var build in GetAuthenticatedUserFeed(follower.Id))
             {
                 builds.Add(build);
             }

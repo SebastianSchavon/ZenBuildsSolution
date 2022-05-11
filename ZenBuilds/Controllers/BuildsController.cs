@@ -63,31 +63,31 @@ public class BuildsController : BaseController
         return Ok(allBuilds);
     }
 
-    [HttpGet("getAuthenticatedUserFeed")]
-    public IActionResult GetAuthenticatedUserFeed()
+    [HttpGet("getBuildsByUserId/{userId}")]
+    public IActionResult GetBuildsByUserId(int userId)
     {
-        var userFeed = _buildService.GetAuthenticatedUserFeed(GetAuthenticatedUserId());
+        var userFeed = _buildService.GetBuildsByUserId(userId);
         return Ok(userFeed);
     }
 
-    [HttpGet("getBuildsByUserIdLatest")]
-    public IActionResult GetBuildsByUserIdLatest()
+    [HttpGet("getBuildsByUserIdLatest/{userId}")]
+    public IActionResult GetBuildsByUserIdLatest(int userId)
     {
-        var userFeed = _buildService.GetAuthenticatedUserFeedLatest(GetAuthenticatedUserId());
+        var userFeed = _buildService.GetBuildsByUserIdLatest(userId);
         return Ok(userFeed);
     }
 
-    [HttpGet("getFollowingBuilds")]
-    public IActionResult GetFollowingBuilds()
+    [HttpGet("GetAuthenticatedUserFollowingBuilds")]
+    public IActionResult GetAuthenticatedUserFollowingBuilds()
     {
-        var followingBuilds = _buildService.GetFollowingBuilds(GetAuthenticatedUserId());
+        var followingBuilds = _buildService.GetAuthenticatedUserFeed(GetAuthenticatedUserId());
         return Ok(followingBuilds);
     }
 
-    [HttpGet("getFollowingBuildsLatest")]
-    public IActionResult GetFollowingBuildsLatest()
+    [HttpGet("getAuthenticatedUserFollowingBuildsLatest")]
+    public IActionResult GetAuthenticatedUserFollowingBuildsLatest()
     {
-        var followingBuilds = _buildService.GetFollowingBuildsLatest(GetAuthenticatedUserId());
+        var followingBuilds = _buildService.GetAuthenticatedUserFeedLatest(GetAuthenticatedUserId());
         return Ok(followingBuilds);
     }
 
@@ -104,6 +104,20 @@ public class BuildsController : BaseController
         {
             _buildService.ToggleBuildLike(toggleLikeRequest);
             return Ok(new { message = "Like toggled" });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpGet("getBuildLikes")]
+    public IActionResult GetBuildLikes(BuildCompositeKey buildCompositeKey)
+    {
+        try
+        {
+            var likedBy = _buildService.GetBuildLikes(buildCompositeKey);
+            return Ok(likedBy);
         }
         catch (KeyNotFoundException ex)
         {

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZenBuilds.Helpers;
 
@@ -11,9 +12,10 @@ using ZenBuilds.Helpers;
 namespace ZenBuilds.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220511112347_SmallDateTime")]
+    partial class SmallDateTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +23,24 @@ namespace ZenBuilds.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("BuildUser", b =>
+                {
+                    b.Property<int>("LikesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LikedBuildsUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LikedBuildsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LikesId", "LikedBuildsUserId", "LikedBuildsId");
+
+                    b.HasIndex("LikedBuildsUserId", "LikedBuildsId");
+
+                    b.ToTable("BuildUser");
+                });
 
             modelBuilder.Entity("ZenBuilds.Entities.Build", b =>
                 {
@@ -74,30 +94,6 @@ namespace ZenBuilds.Migrations
                     b.HasIndex("Follower_UserId");
 
                     b.ToTable("Followers");
-                });
-
-            modelBuilder.Entity("ZenBuilds.Entities.Like", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BuildId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BuildId1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BuildUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LikeDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("UserId", "BuildId");
-
-                    b.HasIndex("BuildUserId", "BuildId1");
-
-                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("ZenBuilds.Entities.User", b =>
@@ -156,6 +152,21 @@ namespace ZenBuilds.Migrations
                     b.ToTable("UserLogs");
                 });
 
+            modelBuilder.Entity("BuildUser", b =>
+                {
+                    b.HasOne("ZenBuilds.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("LikesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ZenBuilds.Entities.Build", null)
+                        .WithMany()
+                        .HasForeignKey("LikedBuildsUserId", "LikedBuildsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ZenBuilds.Entities.Build", b =>
                 {
                     b.HasOne("ZenBuilds.Entities.User", "User")
@@ -186,25 +197,6 @@ namespace ZenBuilds.Migrations
                     b.Navigation("User_User");
                 });
 
-            modelBuilder.Entity("ZenBuilds.Entities.Like", b =>
-                {
-                    b.HasOne("ZenBuilds.Entities.User", "User")
-                        .WithMany("LikedBuilds")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ZenBuilds.Entities.Build", "Build")
-                        .WithMany("Likes")
-                        .HasForeignKey("BuildUserId", "BuildId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Build");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ZenBuilds.Entities.UserLog", b =>
                 {
                     b.HasOne("ZenBuilds.Entities.User", "User")
@@ -216,11 +208,6 @@ namespace ZenBuilds.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ZenBuilds.Entities.Build", b =>
-                {
-                    b.Navigation("Likes");
-                });
-
             modelBuilder.Entity("ZenBuilds.Entities.User", b =>
                 {
                     b.Navigation("Builds");
@@ -228,8 +215,6 @@ namespace ZenBuilds.Migrations
                     b.Navigation("Followers");
 
                     b.Navigation("Following");
-
-                    b.Navigation("LikedBuilds");
 
                     b.Navigation("UserLogs");
                 });

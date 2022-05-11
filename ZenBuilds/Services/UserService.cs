@@ -13,8 +13,8 @@ public interface IUserService
     void Update(int userId, UpdateRequest request);
     void Delete(int userId);
 
-    IEnumerable<User> GetAllUsers();
-    User GetUserByUsername(string username);
+    IEnumerable<GetUserResponse> GetAllUsers();
+    GetUserResponse GetUserByUsername(string username);
 
     User GetUserById(int id);
     void UpdateZenPoints(int userId);
@@ -130,17 +130,24 @@ public class UserService : IUserService
     /// use as leaderbord
     ///     users with the most zenpoints on top
     /// </summary>
-    public IEnumerable<User> GetAllUsers()
+    public IEnumerable<GetUserResponse> GetAllUsers()
     {
-        return _context.Users.OrderBy(x => x.ZenPoints);
+        var users = _context.Users.Select(user => _mapper.Map<GetUserResponse>(user)).ToList();
+
+        return users.OrderBy(x => x.ZenPoints);
     }
 
-    public User GetUserByUsername(string username)
+
+    public GetUserResponse GetUserByUsername(string username)
     {
         var user = _context.Users.SingleOrDefault(x => x.Username == username);
+
         if (user == null)
             throw new KeyNotFoundException("User not found");
-        return user;
+
+        var userResponse = _mapper.Map<GetUserResponse>(user);
+
+        return userResponse;
     }
 
     // helper methods

@@ -17,7 +17,7 @@ public interface IFollowerService
     IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId);
     IEnumerable<GetFollowerResponse> GetUserFollowing(int user_UserId);
     Follower GetFollower(FollowCompositeKey followCompositeKey);
-    
+
 }
 
 public class FollowerService : IFollowerService
@@ -38,10 +38,14 @@ public class FollowerService : IFollowerService
     /// </summary>
     public void AddFollow(FollowCompositeKey followCompositeKey)
     {
+        if (followCompositeKey.User_UserId == followCompositeKey.Follower_UserId)
+            throw new Exception("Cant follow one self");
+
         if (!_context.Users.Any(x => x.Id == followCompositeKey.Follower_UserId))
             throw new Exception("The User which you are trying to follow does not exist");
 
-        if (_context.Followers.Any(x => x.User_UserId == followCompositeKey.User_UserId))
+        if (_context.Followers.Any(x => x.User_UserId == followCompositeKey.User_UserId) &&
+            _context.Followers.Any(x => x.Follower_UserId == followCompositeKey.Follower_UserId))
             throw new Exception("User is already followed");
 
         var follower = _mapper.Map<Follower>(followCompositeKey);
@@ -72,21 +76,19 @@ public class FollowerService : IFollowerService
     /// </summary>
     public IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId)
     {
-        var followers = _context.Followers.Where(x => x.Follower_UserId == follower_UserId)
-            .Select(x => new GetFollowerResponse
+        var following = _context.Followers.Where(x => x.Follower_UserId == follower_UserId)
+            .Select(follower => new GetFollowerResponse
             {
-                Follower_UserId = x.User_User.Id,
-                Username = x.User_User.Username,
-                Description = x.User_User.Description,
-                ZenPoints = x.User_User.ZenPoints,
-                FollowDate = x.FollowDate
+                Id = follower.User_User.Id,
+                Username = follower.User_User.Username,
+                Description = follower.User_User.Description,
+                ZenPoints = follower.User_User.ZenPoints,
+                FollowDate = follower.FollowDate
 
-            }).ToList();
+            });
 
-        return followers.OrderBy(x => x.FollowDate);
+        return following;
 
-        //var followers = _context.Followers.Where(x => x.Follower_UserId == follower_UserId);
-        //return followers;
     }
 
     /// <summary>
@@ -98,15 +100,15 @@ public class FollowerService : IFollowerService
     public IEnumerable<GetFollowerResponse> GetUserFollowing(int user_UserId)
     {
         var following = _context.Followers.Where(x => x.User_UserId == user_UserId)
-            .Select(x => new GetFollowerResponse
+            .Select(follower => new GetFollowerResponse
             {
-                Follower_UserId = x.User_User.Id,
-                Username = x.User_User.Username,
-                Description = x.User_User.Description,
-                ZenPoints = x.User_User.ZenPoints,
-                FollowDate = x.FollowDate
+                Id = follower.Follower_User.Id,
+                Username = follower.Follower_User.Username,
+                Description = follower.Follower_User.Description,
+                ZenPoints = follower.Follower_User.ZenPoints,
+                FollowDate = follower.FollowDate
 
-            }).ToList();
+            });
 
         return following.OrderBy(x => x.FollowDate);
     }
@@ -115,13 +117,13 @@ public class FollowerService : IFollowerService
     public Follower GetFollower(FollowCompositeKey followCompositeKey)
     {
         var follower = _context.Followers.Find(followCompositeKey.User_UserId, followCompositeKey.Follower_UserId);
-        
+
         // will the exception be thrown all the way up to the followerController?
-        if(follower == null)
+        if (follower == null)
             throw new KeyNotFoundException("Follower not found");
 
         return follower;
-        
+
     }
 
 

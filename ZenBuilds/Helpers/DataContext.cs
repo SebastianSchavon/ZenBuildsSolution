@@ -20,6 +20,7 @@ public class DataContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Follower> Followers { get; set; }
+    public DbSet<Like> Likes { get; set; }
     public DbSet<Build> Builds { get; set; }
     public DbSet<UserLog> UserLogs { get; set; }
 
@@ -31,6 +32,7 @@ public class DataContext : DbContext
         builder.Entity<Follower>().HasKey(x => new { x.User_UserId, x.Follower_UserId });
         builder.Entity<Build>().HasKey(x => new { x.UserId, x.Id });
         builder.Entity<UserLog>().HasKey(x => new { x.UserId, x.Id });
+        builder.Entity<Like>().HasKey(x => new { x.UserId, x.BuildId });
 
         builder.Entity<Follower>()
             .HasOne(x => x.Follower_User)
@@ -49,9 +51,14 @@ public class DataContext : DbContext
             .WithOne(x => x.User)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Entity<Build>()
-            .HasMany(x => x.Likes)
+        builder.Entity<Like>()
+            .HasOne(x => x.User)
             .WithMany(x => x.LikedBuilds);
+
+
+        builder.Entity<Like>()
+            .HasOne(x => x.Build)
+            .WithMany(x => x.Likes);
 
         //// setting follower relations to resolve problem of not having two follower-collections in user entity
         //builder.Entity<Follower>()
