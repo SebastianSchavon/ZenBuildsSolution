@@ -26,12 +26,17 @@ public class AutoMapperProfile : Profile
         CreateMap<AuthenticateRequest, User>();
         CreateMap<UpdateRequest, User>();
 
+        CreateMap<User, GetLikeResponse>();
+
         CreateMap<Build, GetBuildResponse>();
 
-        CreateMap<Like, GetLikeResponse>();
-        CreateMap<LikeCompositeKey, Like>();
+        CreateMap<Like, LikeRequest>();
 
-
+        //CreateMap<LikeCompositeKey, Like>()
+        //    .ForMember(dest => dest.BuildId, opt => opt.MapFrom(src => src.Build_BuildId))
+        //    .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+            
+            
 
         CreateMap<Follower, GetFollowerResponse>()
             .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
@@ -41,33 +46,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
             .ForAllMembers(opt => opt.MapFrom(src => src.Follower_User));
 
-        ////CreateMap<Follower, GetFollowerResponse>()
-        ////    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Follower_User.Id))
-        ////    .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Follower_User.Username))
-        ////    .ForMember(dest => dest.ZenPoints, opt => opt.MapFrom(src => src.Follower_User.ZenPoints))
-        ////    .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate));
-
-
-
-        //// reverse this?
-        //CreateMap<Follower, GetFollowerResponse>()
-        //    .ForMember(f => f.FollowDate, u => u.MapFrom(s => s.FollowDate))
-        //    .ForMember(f => f.Id, u => u.MapFrom(s => s.Follower_User.Id))
-        //    .ForMember(f => f.Username, u => u.MapFrom(s => s.Follower_User.Username))
-        //    .ForMember(f => f.ZenPoints, u => u.MapFrom(s => s.Follower_User.ZenPoints))
-        //    .ForMember(f => f.Description, u => u.MapFrom(s => s.Follower_User.Description));
-
-        //CreateMap<Follower, GetFollowerResponse>()
-        //    .ForMember(f => f.FollowDate, u => u.MapFrom(s => s.FollowDate))
-        //    .ForMember(f => f.Id, u => u.MapFrom(s => s.User_User.Id))
-        //    .ForMember(f => f.Username, u => u.MapFrom(s => s.User_User.Username))
-        //    .ForMember(f => f.ZenPoints, u => u.MapFrom(s => s.User_User.ZenPoints))
-        //    .ForMember(f => f.Description, u => u.MapFrom(s => s.User_User.Description));
-
-
-
-
-        CreateMap<FollowCompositeKey, Follower>();
+        CreateMap<FollowRequest, Follower >();
 
         CreateMap<CreateBuildRequest, Build>();
 

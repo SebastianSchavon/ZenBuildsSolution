@@ -5,8 +5,9 @@ namespace ZenBuilds.Models.Builds;
 public class ToggleLikeRequest
 {
     [Required]
-    public BuildCompositeKey BuildId { get; set; }
+    public int Id { get; set; }
 
     [Required]
-    public int Current_UserId { get; set; }
+    public int UserId { get; set; }
+    public int BuildId { get; set; }
 }

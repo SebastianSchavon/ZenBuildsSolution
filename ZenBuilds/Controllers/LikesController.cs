@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ZenBuilds.Models.Builds;
 using ZenBuilds.Models.Likes;
 using ZenBuilds.Services;
 
@@ -13,18 +14,18 @@ public class LikesController : BaseController
         _likeService = likeService;
     }
 
-    [HttpPost("toggleLike/{buildId}")]
-    public IActionResult AddFollow(int buildId)
+    [HttpPost("toggleLike/{id}")]
+    public IActionResult ToggleLike(int id)
     {
-        var likeCompositeKey = new LikeCompositeKey
+        var likeRequest = new LikeRequest
         {
-            UserId = GetAuthenticatedUserId(),
-            BuildId = buildId
+            Id = id,
+            UserId = GetAuthenticatedUserId()
         };
 
         try
         {
-            _likeService.ToggleLike(likeCompositeKey);
+            _likeService.ToggleLike(likeRequest);
             return Ok(new { message = "Like toggled" });
         }
         catch (Exception ex)
@@ -34,7 +35,7 @@ public class LikesController : BaseController
 
     }
 
-    [HttpGet("getBuildLikes/{buildId}")]
+    [HttpGet("getBuildLikes")]
     public IActionResult GetBuildLikes(int buildId)
     {
         try

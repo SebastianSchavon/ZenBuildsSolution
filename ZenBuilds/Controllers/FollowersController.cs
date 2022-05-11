@@ -17,7 +17,7 @@ public class FollowersController : BaseController
     [HttpPost("addFollow/{follower_UserId}")]
     public IActionResult AddFollow(int follower_UserId)
     {
-        var followCompositeKey = new FollowCompositeKey
+        var followRequest = new FollowRequest
         {
             User_UserId = GetAuthenticatedUserId(),
             Follower_UserId = follower_UserId
@@ -25,7 +25,7 @@ public class FollowersController : BaseController
 
         try
         {
-            _followerService.AddFollow(followCompositeKey);
+            _followerService.AddFollow(followRequest);
             return Ok(new { message = "Follow created" });
         }
         catch (Exception ex)
@@ -38,7 +38,7 @@ public class FollowersController : BaseController
     [HttpDelete("removeFollow/{follower_UserId}")]
     public IActionResult RemoveFollow(int follower_UserId)
     {
-        var followCompositeKey = new FollowCompositeKey
+        var followRequest = new FollowRequest
         {
             User_UserId = GetAuthenticatedUserId(),
             Follower_UserId = follower_UserId
@@ -46,7 +46,7 @@ public class FollowersController : BaseController
 
         try
         {
-            _followerService.RemoveFollow(followCompositeKey);
+            _followerService.RemoveFollow(followRequest);
             return Ok(new { message = "Removed follow" });
         }
         catch (KeyNotFoundException ex)

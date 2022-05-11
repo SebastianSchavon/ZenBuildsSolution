@@ -9,8 +9,7 @@ namespace ZenBuilds.Services;
 public interface IBuildService
 {
     void CreateBuild(int userId, CreateBuildRequest createBuildRequest);
-    void DeleteBuild(BuildCompositeKey buildCompositeKey);
-    void ToggleBuildLike(ToggleLikeRequest toggleLikeRequest);
+    void DeleteBuild(int userId, int id);
 
     IEnumerable<GetBuildResponse> GetAllBuilds();
     IEnumerable<GetBuildResponse> GetAllBuildsLatest();
@@ -19,7 +18,7 @@ public interface IBuildService
     IEnumerable<GetBuildResponse> GetAuthenticatedUserFeed(int userId);
     IEnumerable<GetBuildResponse> GetAuthenticatedUserFeedLatest(int userId);
 
-    Build GetBuildById(BuildCompositeKey buildCompositeKey);
+    Build GetBuildById(int buildId);
 }
 
 public class BuildService : IBuildService
@@ -49,41 +48,15 @@ public class BuildService : IBuildService
         _context.SaveChanges();
     }
 
-    public void DeleteBuild(BuildCompositeKey buildCompositeKey)
+    public void DeleteBuild(int userId, int id)
     {
-        _context.Builds.Remove(GetBuildById(buildCompositeKey));
-        _context.SaveChanges();
-    }
+        var build = _context.Builds.SingleOrDefault(x => x.UserId == userId && x.Id == id);
 
-    /// <summary>
-    /// toggle like on build:
-    ///     if user exists in liked list of users
-    ///         remove user from list
-    ///     if user does not exist in liked list of users
-    ///         add user to list
-    ///         
-    /// likescount property equals liked list of users count
-    /// 
-    /// update zenpoints of user who recieved like
-    /// </summary>
-    public void ToggleBuildLike(ToggleLikeRequest toggleLikeRequest)
-    {
-        var currentUser = _userService.GetUserById(toggleLikeRequest.Current_UserId);
-        var build = GetBuildById(toggleLikeRequest.BuildId);
-
-        //var likes = _context.Builds.Find(toggleLikeRequest.BuildId.UserId, toggleLikeRequest.BuildId.Id).Likes;
-
+        if (build == null)
+            throw new Exception("Build not found");
         
-        //if (!likes.Contains(currentUser))
-        //    likes.Add(currentUser);
-        //else
-        //    likes.Remove(currentUser);
-
-        build.LikesCount = build.Likes.Count;
-
+        _context.Builds.Remove(build);
         _context.SaveChanges();
-
-        _userService.UpdateZenPoints(toggleLikeRequest.BuildId.UserId);
     }
 
     /// <summary>
@@ -187,9 +160,9 @@ public class BuildService : IBuildService
         return builds.OrderBy(x => x.Published);
     }
 
-    public Build GetBuildById(BuildCompositeKey buildCompositeKey)
+    public Build GetBuildById(int buildId)
     {
-        var build = _context.Builds.Find(buildCompositeKey.UserId, buildCompositeKey.Id);
+        var build = _context.Builds.Find(buildId);
 
         if (build == null)
             throw new KeyNotFoundException("Build not found");

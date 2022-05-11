@@ -8,5 +8,5 @@ public class BuildCompositeKey
     public int UserId { get; set; }
 
     [Required]
-    public int Id { get; set; }
+    public int BuildId { get; set; }
 }

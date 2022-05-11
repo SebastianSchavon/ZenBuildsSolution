@@ -32,15 +32,10 @@ public class BuildsController : BaseController
     [HttpDelete("delete/{id}")]
     public IActionResult DeleteBuild(int id)
     {
-        var buildCompositeKey = new BuildCompositeKey
-        {
-            UserId = GetAuthenticatedUserId(),
-            Id = id
-        };
 
         try
         {
-            _buildService.DeleteBuild(buildCompositeKey);
+            _buildService.DeleteBuild(GetAuthenticatedUserId(), id);
             return Ok(new { message = "Build deleted" });
         }
         catch (KeyNotFoundException ex)
@@ -91,46 +86,12 @@ public class BuildsController : BaseController
         return Ok(followingBuilds);
     }
 
-    [HttpPatch("toggleBuildLike")]
-    public IActionResult ToggleBuildLike(BuildCompositeKey buildId)
-    {
-        var toggleLikeRequest = new ToggleLikeRequest
-        {
-            Current_UserId = GetAuthenticatedUserId(),
-            BuildId = buildId
-        };
-
-        try
-        {
-            _buildService.ToggleBuildLike(toggleLikeRequest);
-            return Ok(new { message = "Like toggled" });
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
-
-    [HttpGet("getBuildLikes")]
-    public IActionResult GetBuildLikes(BuildCompositeKey buildCompositeKey)
+    [HttpGet("getBuildById/{buildId}")]
+    public IActionResult GetBuildById(int buildId)
     {
         try
         {
-            var likedBy = _buildService.GetBuildLikes(buildCompositeKey);
-            return Ok(likedBy);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
-
-    [HttpGet("getBuildById")]
-    public IActionResult GetBuildById(BuildCompositeKey buildCompositeKey)
-    {
-        try
-        {
-            var build = _buildService.GetBuildById(buildCompositeKey);
+            var build = _buildService.GetBuildById(buildId);
             return Ok(build);
         }
         catch (KeyNotFoundException ex)

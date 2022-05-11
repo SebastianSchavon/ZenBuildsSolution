@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using ZenBuilds.Entities;
 using ZenBuilds.Helpers;
+using ZenBuilds.Models.Builds;
 using ZenBuilds.Models.Likes;
 
 namespace ZenBuilds.Services;
 
 public interface ILikeService
 {
-    void ToggleLike(LikeCompositeKey likeCompositeKey);
+    void ToggleLike(LikeRequest likeRequest);
     IEnumerable<GetLikeResponse> GetBuildLikes(int buildId);
     IEnumerable<GetLikeResponse> GetUserLikes(int userId);
 
@@ -17,31 +18,34 @@ public class LikeService : ILikeService
 {
     private DataContext _context;
     private readonly IMapper _mapper;
+    private IBuildService _buildService;
 
-    public LikeService(DataContext context, IMapper mapper)
+    public LikeService(DataContext context, IMapper mapper, IBuildService buildService)
     {
         _context = context;
         _mapper = mapper;
+        _buildService = buildService;
 
     }
 
-    public void ToggleLike(LikeCompositeKey likeCompositeKey)
+    public void ToggleLike(LikeRequest likeRequest)
     {
-        var likes = _context.Likes;
-        var like = _mapper.Map<Like>(likeCompositeKey);
+        var like = _mapper.Map<Like>(likeRequest);
 
-        if (!_context.Builds.Any(x => x.Id == likeCompositeKey.BuildId))
+        if (!_context.Builds.Any(x => x.Id == likeRequest.Id))
             throw new Exception("No Build found");
 
-        if (likes.Any(x => x.BuildId == likeCompositeKey.BuildId) &&
-            likes.Any(x => x.UserId == likeCompositeKey.UserId))
-            likes.Remove(like);
+        if(_context.Likes.Any(x => x.Id == likeRequest.Id && x.UserId == likeRequest.UserId))
+        {
+            _context.Likes.Remove(like);
+        }
         else
         {
-            like.LikeDate = DateTime.Now;
-            likes.Add(like);
+            _context.Likes.Add(like);   
         }
-            
+
+
+        _context.SaveChanges();
     }
 
     public IEnumerable<GetLikeResponse> GetBuildLikes(int buildId)

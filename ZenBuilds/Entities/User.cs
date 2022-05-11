@@ -15,7 +15,6 @@ public class User
     [Column(TypeName = "SmallDateTime ")]
     public DateTime RegisterDate { get; set; }
     public List<Build> Builds { get; set; }
-    public List<Like> LikedBuilds { get; set; }
     public List<UserLog> UserLogs { get; set; }
     
     public List<Follower> Followers { get; set; }

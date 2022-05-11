@@ -57,7 +57,7 @@ public class UsersController : BaseController
             return BadRequest(ex.Message);
         }
     }
-    [AllowAnonymous]
+
     [HttpDelete("delete")]
     public IActionResult Delete()
     {
@@ -72,7 +72,6 @@ public class UsersController : BaseController
         }
     }
 
-    // so... do I not need to try catch this?
     [HttpGet("getAllUsers")]
     public IActionResult GetAllUsers()
     {

@@ -50,6 +50,7 @@ var CustomCorsPolicy = "_customCorsPolicy";
     services.AddScoped<IFollowerService, FollowerService>();
     services.AddScoped<IUserLogService, UserLogService>();
     services.AddScoped<IUserService, UserService>();
+    services.AddScoped<ILikeService, LikeService>();
 
 
 }

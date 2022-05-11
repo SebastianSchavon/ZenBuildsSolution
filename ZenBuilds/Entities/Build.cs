@@ -12,7 +12,6 @@ public class Build
     public string Title { get; set; }
     public string Content { get; set; }
     public int LikesCount { get; set; }
-    public List<Like> Likes { get; set; } 
 
     [Column(TypeName = "SmallDateTime ")]
     public DateTime Published { get; set; }
