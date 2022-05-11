@@ -14,8 +14,8 @@ public interface IFollowerService
     void AddFollow(FollowCompositeKey followCompositeKey);
     void RemoveFollow(FollowCompositeKey followCompositeKey);
 
-    IEnumerable<Follower> GetUserFollowers(int follower_UserId);
-    IEnumerable<Follower> GetUserFollowing(int user_UserId);
+    IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId);
+    IEnumerable<GetFollowerResponse> GetUserFollowing(int user_UserId);
     Follower GetFollower(FollowCompositeKey followCompositeKey);
     
 }
@@ -70,10 +70,23 @@ public class FollowerService : IFollowerService
     ///     
     /// represents all the users that follow the user
     /// </summary>
-    public IEnumerable<Follower> GetUserFollowers(int follower_UserId)
+    public IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId)
     {
-        var followers = _context.Followers.Where(x => x.Follower_UserId == follower_UserId);
-        return followers;
+        var followers = _context.Followers.Where(x => x.Follower_UserId == follower_UserId)
+            .Select(x => new GetFollowerResponse
+            {
+                Follower_UserId = x.User_User.Id,
+                Username = x.User_User.Username,
+                Description = x.User_User.Description,
+                ZenPoints = x.User_User.ZenPoints,
+                FollowDate = x.FollowDate
+
+            }).ToList();
+
+        return followers.OrderBy(x => x.FollowDate);
+
+        //var followers = _context.Followers.Where(x => x.Follower_UserId == follower_UserId);
+        //return followers;
     }
 
     /// <summary>
@@ -82,9 +95,20 @@ public class FollowerService : IFollowerService
     ///     
     /// represents all the users the user is following
     /// </summary>
-    public IEnumerable<Follower> GetUserFollowing(int user_UserId)
+    public IEnumerable<GetFollowerResponse> GetUserFollowing(int user_UserId)
     {
-        return _context.Followers.Where(x => x.User_UserId == user_UserId).OrderBy(x => x.Follower_User.Username); ;
+        var following = _context.Followers.Where(x => x.User_UserId == user_UserId)
+            .Select(x => new GetFollowerResponse
+            {
+                Follower_UserId = x.User_User.Id,
+                Username = x.User_User.Username,
+                Description = x.User_User.Description,
+                ZenPoints = x.User_User.ZenPoints,
+                FollowDate = x.FollowDate
+
+            }).ToList();
+
+        return following.OrderBy(x => x.FollowDate);
     }
 
     // helper method
