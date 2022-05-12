@@ -32,10 +32,6 @@ public class FollowerService : IFollowerService
 
     }
 
-    /// <summary>
-    /// user follows another user by creating a new follower
-    ///     does not need to be accepted by the user receiving the follow
-    /// </summary>
     public void AddFollow(FollowRequest followRequest)
     {
         if (followRequest.User_UserId == followRequest.Follower_UserId)
@@ -55,11 +51,6 @@ public class FollowerService : IFollowerService
         _context.Followers.Add(follower);
         _context.SaveChanges();
     }
-
-    /// <summary>
-    /// user which is the one following another user:
-    ///     removes the follow
-    /// </summary>
     public void RemoveFollow(FollowRequest followRequest)
     {
         var follower = GetFollower(followRequest);
@@ -68,12 +59,6 @@ public class FollowerService : IFollowerService
         _context.SaveChanges();
     }
 
-    /// <summary>
-    /// get a users follower list
-    ///     by returning every follower where the Follower_UserId value equals the given users Id
-    ///     
-    /// represents all the users that follow the user
-    /// </summary>
     public IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId)
     {
         // this needs a automapper
@@ -92,14 +77,9 @@ public class FollowerService : IFollowerService
 
     }
 
-    /// <summary>
-    /// get a users following list 
-    ///     by returning every follower where the User_UserId value equals the given users Id
-    ///     
-    /// represents all the users the user is following
-    /// </summary>
     public IEnumerable<GetFollowerResponse> GetUserFollowing(int user_UserId)
     {
+        // this needs a automapper
         var following = _context.Followers.Where(x => x.User_UserId == user_UserId)
             .Select(follower => new GetFollowerResponse
             {
@@ -119,13 +99,11 @@ public class FollowerService : IFollowerService
     {
         var follower = _context.Followers.Find(followRequest.User_UserId, followRequest.Follower_UserId);
 
-        // will the exception be thrown all the way up to the followerController?
         if (follower == null)
             throw new KeyNotFoundException("Follower not found");
 
         return follower;
 
     }
-
 
 }

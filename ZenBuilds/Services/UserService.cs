@@ -12,13 +12,9 @@ public interface IUserService
     void Register(RegisterRequest request);
     void Update(int userId, UpdateRequest request);
     void Delete(int userId);
-
     IEnumerable<GetUserResponse> GetAllUsers();
     GetUserResponse GetUserByUsername(string username);
-
     User GetUserById(int id);
-    void UpdateZenPoints(int userId);
-    void UpdateAllZenPoints();
 }
 
 public class UserService : IUserService
@@ -26,14 +22,14 @@ public class UserService : IUserService
     private DataContext _context;
     private IJwtUtils _jwtUtils;
     private readonly IMapper _mapper;
-    private IBuildService _buildService;
+    IBaseService _baseService;
 
-    public UserService(DataContext context, IJwtUtils jwtUtils, IMapper mapper, IBuildService buildService)
+    public UserService(DataContext context, IJwtUtils jwtUtils, IMapper mapper, IBaseService baseService)
     {
         _context = context;
         _jwtUtils = jwtUtils;
         _mapper = mapper;
-        _buildService = buildService;
+        _baseService = baseService;
     }
 
     /// <summary>
@@ -161,31 +157,5 @@ public class UserService : IUserService
         return user;
     }
 
-    /// <summary>
-    /// zenpoints amount equals all likes of every build by a user
-    ///     calculate and update zenpoints on single user
-    /// </summary>
-    public void UpdateZenPoints(int userId)
-    {
-        var user = GetUserById(userId);
-        var builds = _buildService.GetBuildsByUserId(userId);
-        user.ZenPoints = builds.Sum(x => x.LikesCount);
 
-        _context.SaveChanges();
-    }
-
-    /// <summary>
-    /// zenpoints amount equals all likes of every build by a user
-    ///     calculate and update zenpoints on each user 
-    /// </summary>
-    public void UpdateAllZenPoints()
-    {
-        foreach (var user in _context.Users)
-        {
-            var builds = _buildService.GetBuildsByUserId(user.Id);
-            user.ZenPoints = builds.Sum(x => x.LikesCount);
-        }
-
-        _context.SaveChanges();
-    }
 }

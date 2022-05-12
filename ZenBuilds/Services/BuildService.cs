@@ -18,7 +18,6 @@ public interface IBuildService
     IEnumerable<GetBuildResponse> GetAuthenticatedUserFeed(int userId);
     IEnumerable<GetBuildResponse> GetAuthenticatedUserFeedLatest(int userId);
 
-    void UpdateBuildLikes(int buildId)
     Build GetBuildById(int buildId);
 }
 
@@ -26,19 +25,13 @@ public class BuildService : IBuildService
 {
     private DataContext _context;
     private readonly IMapper _mapper;
-    private IFollowerService _followerService;
-    private IUserService _userService;
-    private ILikeService _likeService;
+    private IBaseService _baseService;
 
-    public BuildService(DataContext context, IMapper mapper, 
-        IFollowerService followerService, IUserService userService,
-        ILikeService likeService)
+    public BuildService(DataContext context, IMapper mapper, IBaseService baseService)
     {
         _context = context;
         _mapper = mapper;
-        _followerService = followerService;
-        _userService = userService;
-        _likeService = likeService;
+        _baseService = baseService;
     }
 
     public void CreateBuild(int userId, CreateBuildRequest createBuildRequest)
@@ -63,28 +56,12 @@ public class BuildService : IBuildService
         _context.SaveChanges();
     }
 
-    /// <summary>
-    /// returns the global feed: 
-    ///     global feed:
-    ///         all builds by every user
-    ///         
-    /// order:
-    ///     builds with most likes on top
-    /// </summary>
     public IEnumerable<GetBuildResponse> GetAllBuilds()
     {
         var builds = _context.Builds.Select(build => _mapper.Map<GetBuildResponse>(build));
         return builds;
     }
 
-    /// <summary>
-    /// returns the global feed: 
-    ///     global feed:
-    ///         all builds by every user
-    ///         
-    /// order:
-    ///     builds published latest on top
-    /// </summary>
     public IEnumerable<GetBuildResponse> GetAllBuildsLatest()
     {
         var builds = _context.Builds.Select(build => _mapper.Map<GetBuildResponse>(build));
@@ -92,12 +69,6 @@ public class BuildService : IBuildService
         return builds;
     }
 
-    /// <summary>
-    /// returns every build posted by a singel user: 
-    ///         
-    /// order:
-    ///     builds with most likes on top
-    /// </summary>
     public IEnumerable<GetBuildResponse> GetBuildsByUserId(int userId)
     {
         var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
@@ -105,12 +76,6 @@ public class BuildService : IBuildService
         return builds;
     }
 
-    /// <summary>
-    /// returns every build posted by a singel user: 
-    ///         
-    /// order:
-    ///     builds published latest on top
-    /// </summary>
     public IEnumerable<GetBuildResponse> GetBuildsByUserIdLatest(int userId)
     {
         var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
@@ -118,21 +83,13 @@ public class BuildService : IBuildService
         return builds;
     }
 
-    /// <summary>
-    /// returns the private feed: 
-    ///     private feed:
-    ///         all builds posted by users the current user is following
-    ///         
-    /// order:
-    ///     builds with most likes on top
-    /// </summary>
     public IEnumerable<GetBuildResponse> GetAuthenticatedUserFeed(int userId)
     {
         var builds = new List<GetBuildResponse>();
 
-        foreach(var follower in _followerService.GetUserFollowing(userId))
+        foreach(var follower in _context.Followers.Where(x => x.Follower_UserId == userId))
         {
-            foreach(var build in GetBuildsByUserId(follower.Id))
+            foreach(var build in GetBuildsByUserId(follower.User_UserId))
             {
                 builds.Add(build);
             }
@@ -141,37 +98,19 @@ public class BuildService : IBuildService
         return builds;
     }
 
-    /// <summary>
-    /// returns the private feed: 
-    ///     private feed:
-    ///         all builds posted by users the current user is following
-    ///         
-    /// order:
-    ///     builds published latest on top
-    /// </summary>
     public IEnumerable<GetBuildResponse> GetAuthenticatedUserFeedLatest(int userId)
     {
         var builds = new List<GetBuildResponse>();
 
-        foreach (var follower in _followerService.GetUserFollowing(userId))
+        foreach (var follower in _context.Followers.Where(x => x.User_UserId == userId))
         {
-            foreach (var build in GetAuthenticatedUserFeed(follower.Id))
+            foreach (var build in GetAuthenticatedUserFeed(follower.Follower_UserId))
             {
                 builds.Add(build);
             }
         }
 
         return builds;
-    }
-
-    public void UpdateBuildLikes(int buildId)
-    {
-        var build = GetBuildById(buildId);
-        var likes = _likeService.GetBuildLikes(buildId);
-
-        build.LikesCount = likes.Count();
-        _context.SaveChanges();
-
     }
 
     public Build GetBuildById(int buildId)

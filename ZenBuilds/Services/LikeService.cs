@@ -18,13 +18,13 @@ public class LikeService : ILikeService
 {
     private DataContext _context;
     private readonly IMapper _mapper;
-    private IBuildService _buildService;
+    private IBaseService _baseService;
 
-    public LikeService(DataContext context, IMapper mapper, IBuildService buildService)
+    public LikeService(DataContext context, IMapper mapper, IBaseService baseService)
     {
         _context = context;
         _mapper = mapper;
-        _buildService = buildService;
+        _baseService = baseService;
 
     }
 
@@ -48,8 +48,8 @@ public class LikeService : ILikeService
             _context.Likes.Add(like);   
         }
 
-        _buildService.UpdateBuildLikes(likeRequest.BuildId);
-
+        _baseService.UpdateBuildLikes(likeRequest.BuildId);
+        _baseService.UpdateAllZenPoints();
         _context.SaveChanges();
     }
 
