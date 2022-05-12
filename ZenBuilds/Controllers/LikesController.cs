@@ -23,22 +23,19 @@ public class LikesController : BaseController
             UserId = GetAuthenticatedUserId()
         };
 
-        _likeService.ToggleLike(likeRequest);
-        return Ok(new { message = "Like toggled" });
-
-        //try
-        //{
-        //    _likeService.ToggleLike(likeRequest);
-        //    return Ok(new { message = "Like toggled" });
-        //}
-        //catch (Exception ex)
-        //{
-        //    return NotFound(ex.Message);
-        //}
+        try
+        {
+            _likeService.ToggleLike(likeRequest);
+            return Ok(new { message = "Like toggled" });
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
 
     }
 
-    [HttpGet("getBuildLikes")]
+    [HttpGet("getBuildLikes/{buildId}")]
     public IActionResult GetBuildLikes(int buildId)
     {
         try

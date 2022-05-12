@@ -18,6 +18,7 @@ public interface IBuildService
     IEnumerable<GetBuildResponse> GetAuthenticatedUserFeed(int userId);
     IEnumerable<GetBuildResponse> GetAuthenticatedUserFeedLatest(int userId);
 
+    void UpdateBuildLikes(int buildId)
     Build GetBuildById(int buildId);
 }
 
@@ -27,14 +28,17 @@ public class BuildService : IBuildService
     private readonly IMapper _mapper;
     private IFollowerService _followerService;
     private IUserService _userService;
+    private ILikeService _likeService;
 
     public BuildService(DataContext context, IMapper mapper, 
-        IFollowerService followerService, IUserService userService)
+        IFollowerService followerService, IUserService userService,
+        ILikeService likeService)
     {
         _context = context;
         _mapper = mapper;
         _followerService = followerService;
         _userService = userService;
+        _likeService = likeService;
     }
 
     public void CreateBuild(int userId, CreateBuildRequest createBuildRequest)
@@ -158,6 +162,16 @@ public class BuildService : IBuildService
         }
 
         return builds;
+    }
+
+    public void UpdateBuildLikes(int buildId)
+    {
+        var build = GetBuildById(buildId);
+        var likes = _likeService.GetBuildLikes(buildId);
+
+        build.LikesCount = likes.Count();
+        _context.SaveChanges();
+
     }
 
     public Build GetBuildById(int buildId)

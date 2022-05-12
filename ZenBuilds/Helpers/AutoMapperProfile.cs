@@ -24,7 +24,8 @@ public class AutoMapperProfile : Profile
 
         // like
         CreateMap<LikeRequest, Like>();
-        CreateMap<User, GetLikeResponse>();
+        CreateMap<User, GetBuildLikeResponse>();
+        CreateMap<Build, GetUserLikeResponse>();
 
         // userLog
         CreateMap<LogAuthenticateRequest, UserLog>();

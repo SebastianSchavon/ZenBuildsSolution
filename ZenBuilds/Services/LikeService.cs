@@ -9,8 +9,8 @@ namespace ZenBuilds.Services;
 public interface ILikeService
 {
     void ToggleLike(LikeRequest likeRequest);
-    IEnumerable<GetLikeResponse> GetBuildLikes(int buildId);
-    IEnumerable<GetLikeResponse> GetUserLikes(int userId);
+    IEnumerable<GetBuildLikeResponse> GetBuildLikes(int buildId);
+    IEnumerable<GetUserLikeResponse> GetUserLikes(int userId);
 
 }
 
@@ -28,42 +28,43 @@ public class LikeService : ILikeService
 
     }
 
+    // split into three methods?
     public void ToggleLike(LikeRequest likeRequest)
     {
-        var like = _mapper.Map<Like>(likeRequest);
-
-        
-
         if (!_context.Builds.Any(x => x.Id == likeRequest.BuildId))
             throw new Exception("No Build found");
 
         if(_context.Likes.Any(x => x.BuildId == likeRequest.BuildId && x.UserId == likeRequest.UserId))
         {
+            var like = _context.Likes.SingleOrDefault(x => x.BuildId == likeRequest.BuildId && x.UserId == likeRequest.UserId);
             _context.Likes.Remove(like);
         }
         else
         {
+            var like = _mapper.Map<Like>(likeRequest);
+
             like.LikeDate = DateTime.Now;
 
             _context.Likes.Add(like);   
         }
 
+        _buildService.UpdateBuildLikes(likeRequest.BuildId);
 
         _context.SaveChanges();
     }
 
-    public IEnumerable<GetLikeResponse> GetBuildLikes(int buildId)
+    public IEnumerable<GetBuildLikeResponse> GetBuildLikes(int buildId)
     {
         var likes = _context.Likes.Where(x => x.BuildId == buildId)
-            .Select(user => _mapper.Map<GetLikeResponse>(user.User));
+            .Select(user => _mapper.Map<GetBuildLikeResponse>(user.User));
 
         return likes;
     }
 
-    public IEnumerable<GetLikeResponse> GetUserLikes(int userId)
+    public IEnumerable<GetUserLikeResponse> GetUserLikes(int userId)
     {
         var likes = _context.Likes.Where(x => x.UserId == userId)
-            .Select(user => _mapper.Map<GetLikeResponse>(user.User));
+            .Select(user => _mapper.Map<GetUserLikeResponse>(user.Build));
 
         return likes;
     }

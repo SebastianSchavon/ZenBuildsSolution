@@ -26,12 +26,14 @@ public class UserService : IUserService
     private DataContext _context;
     private IJwtUtils _jwtUtils;
     private readonly IMapper _mapper;
+    private IBuildService _buildService;
 
-    public UserService(DataContext context, IJwtUtils jwtUtils, IMapper mapper)
+    public UserService(DataContext context, IJwtUtils jwtUtils, IMapper mapper, IBuildService buildService)
     {
         _context = context;
         _jwtUtils = jwtUtils;
         _mapper = mapper;
+        _buildService = buildService;
     }
 
     /// <summary>
@@ -166,8 +168,8 @@ public class UserService : IUserService
     public void UpdateZenPoints(int userId)
     {
         var user = GetUserById(userId);
-
-        user.ZenPoints = _context.Builds.Where(x => x.UserId == userId).Sum(x => x.LikesCount);
+        var builds = _buildService.GetBuildsByUserId(userId);
+        user.ZenPoints = builds.Sum(x => x.LikesCount);
 
         _context.SaveChanges();
     }
@@ -180,8 +182,10 @@ public class UserService : IUserService
     {
         foreach (var user in _context.Users)
         {
-            user.ZenPoints = _context.Builds.Where(x => x.UserId == user.Id).Sum(x => x.LikesCount);
-            _context.SaveChanges();
+            var builds = _buildService.GetBuildsByUserId(user.Id);
+            user.ZenPoints = builds.Sum(x => x.LikesCount);
         }
+
+        _context.SaveChanges();
     }
 }
