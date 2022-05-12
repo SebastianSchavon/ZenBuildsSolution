@@ -15,23 +15,36 @@ public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
-        // specify object mappings
-        CreateMap<LogAuthenticateRequest, UserLog>();
-
-        CreateMap<User, AuthenticateResponse>();
-
-        CreateMap<User, GetUserResponse>();
-
-        CreateMap<RegisterRequest, User>();
-        CreateMap<AuthenticateRequest, User>();
-        CreateMap<UpdateRequest, User>();
-
-        CreateMap<User, GetLikeResponse>();
-
+        // build
+        CreateMap<CreateBuildRequest, Build>();
         CreateMap<Build, GetBuildResponse>();
 
-        CreateMap<Like, LikeRequest>();
+        // follower
+        CreateMap<FollowRequest, Follower>();
 
+        // like
+        CreateMap<LikeRequest, Like>();
+        CreateMap<User, GetLikeResponse>();
+
+        // userLog
+        CreateMap<LogAuthenticateRequest, UserLog>();
+
+        // user
+        CreateMap<User, AuthenticateResponse>();
+        CreateMap<RegisterRequest, User>();
+        CreateMap<UpdateRequest, User>();
+        CreateMap<User, GetUserResponse>();
+
+        // specify object mappings
+        
+
+        
+
+        
+
+        
+        CreateMap<AuthenticateRequest, User>();
+       
         //CreateMap<LikeCompositeKey, Like>()
         //    .ForMember(dest => dest.BuildId, opt => opt.MapFrom(src => src.Build_BuildId))
         //    .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
@@ -46,9 +59,9 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
             .ForAllMembers(opt => opt.MapFrom(src => src.Follower_User));
 
-        CreateMap<FollowRequest, Follower >();
+        
 
-        CreateMap<CreateBuildRequest, Build>();
+        
 
     }
 

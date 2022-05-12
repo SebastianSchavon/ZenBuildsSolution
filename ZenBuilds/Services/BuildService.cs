@@ -42,7 +42,7 @@ public class BuildService : IBuildService
         var build = _mapper.Map<Build>(createBuildRequest);
         
         build.UserId = userId;
-        build.Published = DateTime.Now.Date;
+        build.Published = DateTime.Now;
 
         _context.Builds.Add(build);
         _context.SaveChanges();
@@ -85,7 +85,7 @@ public class BuildService : IBuildService
     {
         var builds = _context.Builds.Select(build => _mapper.Map<GetBuildResponse>(build));
 
-        return builds.OrderBy(x => x.Published);
+        return builds;
     }
 
     /// <summary>
@@ -98,7 +98,7 @@ public class BuildService : IBuildService
     {
         var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
 
-        return builds.OrderBy(x => x.LikesCount);
+        return builds;
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public class BuildService : IBuildService
     {
         var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
 
-        return builds.OrderBy(x => x.Published);
+        return builds;
     }
 
     /// <summary>
@@ -134,7 +134,7 @@ public class BuildService : IBuildService
             }
         }
 
-        return builds.OrderBy(x => x.LikesCount);
+        return builds;
     }
 
     /// <summary>
@@ -157,7 +157,7 @@ public class BuildService : IBuildService
             }
         }
 
-        return builds.OrderBy(x => x.Published);
+        return builds;
     }
 
     public Build GetBuildById(int buildId)

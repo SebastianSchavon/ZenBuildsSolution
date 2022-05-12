@@ -5,6 +5,7 @@ namespace ZenBuilds.Entities;
 
 public class User
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string Username { get; set; }
     public int ZenPoints { get; set; }
@@ -16,7 +17,7 @@ public class User
     public DateTime RegisterDate { get; set; }
     public List<Build> Builds { get; set; }
     public List<UserLog> UserLogs { get; set; }
-    
+    public List<Like> LikedBuilds { get; set; }
     public List<Follower> Followers { get; set; }
     public List<Follower> Following { get; set; }
 

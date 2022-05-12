@@ -32,15 +32,19 @@ public class LikeService : ILikeService
     {
         var like = _mapper.Map<Like>(likeRequest);
 
-        if (!_context.Builds.Any(x => x.Id == likeRequest.Id))
+        
+
+        if (!_context.Builds.Any(x => x.Id == likeRequest.BuildId))
             throw new Exception("No Build found");
 
-        if(_context.Likes.Any(x => x.Id == likeRequest.Id && x.UserId == likeRequest.UserId))
+        if(_context.Likes.Any(x => x.BuildId == likeRequest.BuildId && x.UserId == likeRequest.UserId))
         {
             _context.Likes.Remove(like);
         }
         else
         {
+            like.LikeDate = DateTime.Now;
+
             _context.Likes.Add(like);   
         }
 
@@ -51,7 +55,7 @@ public class LikeService : ILikeService
     public IEnumerable<GetLikeResponse> GetBuildLikes(int buildId)
     {
         var likes = _context.Likes.Where(x => x.BuildId == buildId)
-            .Select(user => _mapper.Map<GetLikeResponse>(user.User.Username));
+            .Select(user => _mapper.Map<GetLikeResponse>(user.User));
 
         return likes;
     }
@@ -59,7 +63,7 @@ public class LikeService : ILikeService
     public IEnumerable<GetLikeResponse> GetUserLikes(int userId)
     {
         var likes = _context.Likes.Where(x => x.UserId == userId)
-            .Select(user => _mapper.Map<GetLikeResponse>(user.User.Username));
+            .Select(user => _mapper.Map<GetLikeResponse>(user.User));
 
         return likes;
     }

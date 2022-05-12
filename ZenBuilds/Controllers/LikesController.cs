@@ -19,19 +19,22 @@ public class LikesController : BaseController
     {
         var likeRequest = new LikeRequest
         {
-            Id = id,
+            BuildId = id,
             UserId = GetAuthenticatedUserId()
         };
 
-        try
-        {
-            _likeService.ToggleLike(likeRequest);
-            return Ok(new { message = "Like toggled" });
-        }
-        catch (Exception ex)
-        {
-            return NotFound(ex.Message);
-        }
+        _likeService.ToggleLike(likeRequest);
+        return Ok(new { message = "Like toggled" });
+
+        //try
+        //{
+        //    _likeService.ToggleLike(likeRequest);
+        //    return Ok(new { message = "Like toggled" });
+        //}
+        //catch (Exception ex)
+        //{
+        //    return NotFound(ex.Message);
+        //}
 
     }
 

@@ -30,6 +30,7 @@ public class DataContext : DbContext
     {
         // composite primary key 
         builder.Entity<Follower>().HasKey(x => new { x.User_UserId, x.Follower_UserId });
+        builder.Entity<Like>().HasKey(x => x.Id);
         
 
         builder.Entity<Follower>()

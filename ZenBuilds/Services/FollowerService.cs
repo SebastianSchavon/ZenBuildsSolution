@@ -76,6 +76,7 @@ public class FollowerService : IFollowerService
     /// </summary>
     public IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId)
     {
+        // this needs a automapper
         var following = _context.Followers.Where(x => x.Follower_UserId == follower_UserId)
             .Select(follower => new GetFollowerResponse
             {

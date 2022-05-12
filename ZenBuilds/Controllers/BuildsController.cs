@@ -72,15 +72,15 @@ public class BuildsController : BaseController
         return Ok(userFeed);
     }
 
-    [HttpGet("GetAuthenticatedUserFollowingBuilds")]
-    public IActionResult GetAuthenticatedUserFollowingBuilds()
+    [HttpGet("getAuthenticatedUserFeed")]
+    public IActionResult GetAuthenticatedUserFeed()
     {
         var followingBuilds = _buildService.GetAuthenticatedUserFeed(GetAuthenticatedUserId());
         return Ok(followingBuilds);
     }
 
-    [HttpGet("getAuthenticatedUserFollowingBuildsLatest")]
-    public IActionResult GetAuthenticatedUserFollowingBuildsLatest()
+    [HttpGet("getAuthenticatedUserFeedLatest")]
+    public IActionResult GetAuthenticatedUserFeedLatest()
     {
         var followingBuilds = _buildService.GetAuthenticatedUserFeedLatest(GetAuthenticatedUserId());
         return Ok(followingBuilds);
