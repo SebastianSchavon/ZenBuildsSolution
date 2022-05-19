@@ -16,6 +16,7 @@ public interface IUserService
     IEnumerable<GetUserResponse> GetAllUsers();
     IEnumerable<GetUserResponse> GetTop20Users();
     GetUserResponse GetUserByUsername(string username);
+    GetAuthenticatedUserResponse GetAuthenticatedUser(int userId);
     User GetUserById(int id);
 }
 
@@ -107,7 +108,7 @@ public class UserService : IUserService
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
         }
 
-        if (_context.Users.Any(x => x.Username == request.Username))
+        if (_context.Users.Any(x => x.Username == request.Username) && user.Username != request.Username)
             throw new Exception("Username already taken");
 
         //if (_context.Users.Any(x => x.Email == request.Email))
@@ -165,6 +166,20 @@ public class UserService : IUserService
         var userResponse = _mapper.Map<GetUserResponse>(user);
 
         return userResponse;
+    }
+
+    public GetAuthenticatedUserResponse GetAuthenticatedUser(int userId)
+    {
+        var user = _context.Users
+            .Include(x => x.Builds)
+            .Include(x => x.LikedBuilds)
+            .Include(x => x.Followers)
+            .Include(x => x.Following)
+            .SingleOrDefault(x => x.Id == userId);
+
+        var use2 = _mapper.Map<GetAuthenticatedUserResponse>(user);
+
+        return use2;
     }
 
     // helper methods

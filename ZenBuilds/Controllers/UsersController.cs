@@ -50,7 +50,7 @@ public class UsersController : BaseController
         try
         {
             _userService.Update(GetAuthenticatedUserId(), updateRequest);
-            return Ok(new { message = "Register success" });
+            return Ok(new { message = "Profile updated" });
         }
         catch (Exception ex)
         {
@@ -91,6 +91,21 @@ public class UsersController : BaseController
         try
         {
             var user = _userService.GetUserByUsername(username);
+            return Ok(user);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+
+    }
+
+    [HttpGet("getAuthenticatedUser")]
+    public IActionResult GetUserByUsername()
+    {
+        try
+        {
+            var user = _userService.GetAuthenticatedUser(GetAuthenticatedUserId());
             return Ok(user);
         }
         catch (KeyNotFoundException ex)

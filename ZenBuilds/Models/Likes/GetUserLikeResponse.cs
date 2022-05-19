@@ -8,3 +8,4 @@ public class GetUserLikeResponse
     public string Content { get; set; }
     public int LikesCount { get; set; }
 }
+

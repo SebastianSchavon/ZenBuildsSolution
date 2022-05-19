@@ -17,7 +17,10 @@ public class AutoMapperProfile : Profile
     {
         // build
         CreateMap<CreateBuildRequest, Build>();
-        CreateMap<Build, GetBuildResponse>();
+        CreateMap<User, GetBuildUserResponse>();
+        CreateMap<Build, GetBuildResponse>()
+            .ForMember(dest => dest.User, opt => opt.MapFrom(source => source.User));
+
 
         // follower
         CreateMap<FollowRequest, Follower>();
@@ -33,7 +36,25 @@ public class AutoMapperProfile : Profile
         // user
         CreateMap<User, AuthenticateResponse>();
         CreateMap<RegisterRequest, User>();
+
         CreateMap<UpdateRequest, User>();
+        // ignore null values passed in update request
+        //CreateMap<UpdateRequest, User>()
+        //    .ForAllMembers(x => x.Condition(
+        //        (src, dest, prop) =>
+        //        {
+        //            // ignore null & empty string properties
+        //            if (prop == null) return false;
+        //            if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
+
+        //            return true;
+        //        }
+        //    ));
+
+        CreateMap<Like, GetBuildLikeResponse>();
+        CreateMap<Follower, GetFollowerResponse>();
+        CreateMap<Build, GetBuildLikeResponse>();
+        CreateMap<User, GetAuthenticatedUserResponse>();
         CreateMap<User, GetUserResponse>()
             .ForMember(dest => dest.Builds, opt => opt.MapFrom(source => source.Builds.ToList()));
 

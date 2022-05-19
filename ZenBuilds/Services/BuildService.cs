@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ZenBuilds.Entities;
 using ZenBuilds.Helpers;
 using ZenBuilds.Models.Builds;
@@ -37,7 +38,7 @@ public class BuildService : IBuildService
     public void CreateBuild(int userId, CreateBuildRequest createBuildRequest)
     {
         var build = _mapper.Map<Build>(createBuildRequest);
-        
+
         build.UserId = userId;
         build.Published = DateTime.Now;
 
@@ -51,14 +52,15 @@ public class BuildService : IBuildService
 
         if (build == null)
             throw new Exception("Build not found");
-        
+
         _context.Builds.Remove(build);
         _context.SaveChanges();
     }
 
     public IEnumerable<GetBuildResponse> GetAllBuilds()
     {
-        var builds = _context.Builds.Select(build => _mapper.Map<GetBuildResponse>(build));
+        var builds = _context.Builds.Include(x => x.User).Select(build => _mapper.Map<GetBuildResponse>(build)).ToList();
+
         return builds;
     }
 
@@ -71,7 +73,12 @@ public class BuildService : IBuildService
 
     public IEnumerable<GetBuildResponse> GetBuildsByUserId(int userId)
     {
-        var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
+        //var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
+
+        var builds = _context.Builds
+            .Where(x => x.UserId == userId)
+            .Include(x => x.User)
+            .Select(build => _mapper.Map<GetBuildResponse>(build)).ToList();
 
         return builds;
     }
@@ -87,9 +94,9 @@ public class BuildService : IBuildService
     {
         var builds = new List<GetBuildResponse>();
 
-        foreach(var follower in _context.Followers.Where(x => x.User_UserId == userId))
+        foreach (var follower in _context.Followers.Where(x => x.User_UserId == userId))
         {
-            foreach(var build in GetBuildsByUserId(follower.Follower_UserId))
+            foreach (var build in GetBuildsByUserId(follower.Follower_UserId))
             {
                 builds.Add(build);
             }
