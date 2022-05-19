@@ -1,6 +1,7 @@
 ﻿namespace ZenBuilds.Services;
 
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ZenBuilds.Authorization;
 using ZenBuilds.Entities;
 using ZenBuilds.Helpers;
@@ -13,6 +14,7 @@ public interface IUserService
     void Update(int userId, UpdateRequest request);
     void Delete(int userId);
     IEnumerable<GetUserResponse> GetAllUsers();
+    IEnumerable<GetUserResponse> GetTop20Users();
     GetUserResponse GetUserByUsername(string username);
     User GetUserById(int id);
 }
@@ -135,6 +137,23 @@ public class UserService : IUserService
         return users.OrderBy(x => x.ZenPoints);
     }
 
+    public IEnumerable<GetUserResponse> GetTop20Users()
+    {
+        //var users = (_context.Users.Select(user => new User
+        //{
+        //    Id,
+        //    U
+        //    Builds = (List<Build>)_context.Builds.Where(x => x.UserId == user.Id)
+
+        //}).Take(20).ToList()).Select(user => _mapper.Map<GetUserResponse>(user)).Take(20).ToList();
+
+
+        var users = _context.Users.Include(x => x.Builds).Select(user => _mapper.Map<GetUserResponse>(user)).Take(20).ToList();
+
+
+
+        return users.OrderByDescending(x => x.ZenPoints);
+    }
 
     public GetUserResponse GetUserByUsername(string username)
     {

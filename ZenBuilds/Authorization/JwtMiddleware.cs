@@ -10,6 +10,7 @@ public class JwtMiddleware
 
     public JwtMiddleware(RequestDelegate next)
     {
+        // next middleware?
         _next = next;
     }
 

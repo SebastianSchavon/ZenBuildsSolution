@@ -57,7 +57,7 @@ namespace ZenBuilds.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Builds");
+                    b.ToTable("Builds", (string)null);
                 });
 
             modelBuilder.Entity("ZenBuilds.Entities.Follower", b =>
@@ -75,7 +75,7 @@ namespace ZenBuilds.Migrations
 
                     b.HasIndex("Follower_UserId");
 
-                    b.ToTable("Followers");
+                    b.ToTable("Followers", (string)null);
                 });
 
             modelBuilder.Entity("ZenBuilds.Entities.Like", b =>
@@ -101,7 +101,7 @@ namespace ZenBuilds.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Likes");
+                    b.ToTable("Likes", (string)null);
                 });
 
             modelBuilder.Entity("ZenBuilds.Entities.User", b =>
@@ -131,7 +131,7 @@ namespace ZenBuilds.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ZenBuilds.Entities.UserLog", b =>
@@ -159,7 +159,7 @@ namespace ZenBuilds.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLogs");
+                    b.ToTable("UserLogs", (string)null);
                 });
 
             modelBuilder.Entity("ZenBuilds.Entities.Build", b =>

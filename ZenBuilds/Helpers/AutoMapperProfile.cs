@@ -34,7 +34,8 @@ public class AutoMapperProfile : Profile
         CreateMap<User, AuthenticateResponse>();
         CreateMap<RegisterRequest, User>();
         CreateMap<UpdateRequest, User>();
-        CreateMap<User, GetUserResponse>();
+        CreateMap<User, GetUserResponse>()
+            .ForMember(dest => dest.Builds, opt => opt.MapFrom(source => source.Builds.ToList()));
 
         // specify object mappings
         

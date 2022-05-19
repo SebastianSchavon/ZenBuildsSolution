@@ -48,9 +48,11 @@ public class LikeService : ILikeService
             _context.Likes.Add(like);   
         }
 
+        _context.SaveChanges();
+
+
         _baseService.UpdateBuildLikes(likeRequest.BuildId);
         _baseService.UpdateAllZenPoints();
-        _context.SaveChanges();
     }
 
     public IEnumerable<GetBuildLikeResponse> GetBuildLikes(int buildId)

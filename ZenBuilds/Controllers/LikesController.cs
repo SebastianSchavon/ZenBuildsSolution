@@ -14,7 +14,8 @@ public class LikesController : BaseController
         _likeService = likeService;
     }
 
-    [HttpPost("toggleLike/{id}")]
+    // change to put?
+    [HttpPut("toggleLike/{id}")]
     public IActionResult ToggleLike(int id)
     {
         var likeRequest = new LikeRequest

@@ -78,6 +78,12 @@ public class UsersController : BaseController
         var allUsers = _userService.GetAllUsers();
         return Ok(allUsers);
     }
+    [HttpGet("getTop20Users")]
+    public IActionResult GetTop20Users()
+    {
+        var allUsers = _userService.GetTop20Users();
+        return Ok(allUsers);
+    }
 
     [HttpGet("getUserByUsername/{username}")]
     public IActionResult GetUserByUsername(string username)

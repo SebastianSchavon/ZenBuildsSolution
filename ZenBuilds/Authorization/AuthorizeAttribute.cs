@@ -8,6 +8,7 @@ using ZenBuilds.Entities;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 {
+    // authorizationFilterContext context is the controller class and its content (the endpoints, the HttpContext, etc...)
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         // if endpoint is decorated with AllowAnonymous attribute

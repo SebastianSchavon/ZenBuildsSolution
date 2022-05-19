@@ -87,9 +87,9 @@ public class BuildService : IBuildService
     {
         var builds = new List<GetBuildResponse>();
 
-        foreach(var follower in _context.Followers.Where(x => x.Follower_UserId == userId))
+        foreach(var follower in _context.Followers.Where(x => x.User_UserId == userId))
         {
-            foreach(var build in GetBuildsByUserId(follower.User_UserId))
+            foreach(var build in GetBuildsByUserId(follower.Follower_UserId))
             {
                 builds.Add(build);
             }

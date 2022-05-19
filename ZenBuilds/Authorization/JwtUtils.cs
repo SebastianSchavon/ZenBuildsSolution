@@ -33,6 +33,7 @@ public class JwtUtils : IJwtUtils
         // configure token properties
         var tokenDescriptor = new SecurityTokenDescriptor
         {
+            // a claim is the bagage of the token, and in this case we send the id as a bagage?
             Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
             Expires = DateTime.UtcNow.AddDays(3),
 
