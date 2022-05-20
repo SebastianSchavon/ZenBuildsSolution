@@ -6,8 +6,10 @@ public class UpdateRequest
 {
     [Required]
     public string? Username { get; set; }
-    [Required]
+
     public string? Description { get; set; }
+    [Required]
+    public string ProfileImage { get; set; }
 
     public string? OldPassword { get; set; }
 

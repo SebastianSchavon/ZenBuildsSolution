@@ -26,8 +26,8 @@ public class LikesController : BaseController
 
         try
         {
-            _likeService.ToggleLike(likeRequest);
-            return Ok(new { message = "Like toggled" });
+            var likes = _likeService.ToggleLike(likeRequest);
+            return Ok(likes);
         }
         catch (Exception ex)
         {

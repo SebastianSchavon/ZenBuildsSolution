@@ -8,7 +8,7 @@ namespace ZenBuilds.Services;
 
 public interface ILikeService
 {
-    void ToggleLike(LikeRequest likeRequest);
+    int ToggleLike(LikeRequest likeRequest);
     IEnumerable<GetBuildLikeResponse> GetBuildLikes(int buildId);
     IEnumerable<GetUserLikeResponse> GetUserLikes(int userId);
 
@@ -29,7 +29,7 @@ public class LikeService : ILikeService
     }
 
     // split into three methods?
-    public void ToggleLike(LikeRequest likeRequest)
+    public int ToggleLike(LikeRequest likeRequest)
     {
         if (!_context.Builds.Any(x => x.Id == likeRequest.BuildId))
             throw new Exception("No Build found");
@@ -51,8 +51,9 @@ public class LikeService : ILikeService
         _context.SaveChanges();
 
 
-        _baseService.UpdateBuildLikes(likeRequest.BuildId);
+        
         _baseService.UpdateAllZenPoints();
+        return _baseService.UpdateBuildLikes(likeRequest.BuildId);
     }
 
     public IEnumerable<GetBuildLikeResponse> GetBuildLikes(int buildId)

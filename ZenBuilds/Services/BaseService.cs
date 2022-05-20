@@ -11,7 +11,7 @@ public interface IBaseService
 {
     void UpdateZenPoints(int userId);
     void UpdateAllZenPoints();
-    void UpdateBuildLikes(int buildId);
+    int UpdateBuildLikes(int buildId);
 
 }
 
@@ -48,7 +48,7 @@ public class BaseService : IBaseService
         _context.SaveChanges();
     }
 
-    public void UpdateBuildLikes(int buildId)
+    public int UpdateBuildLikes(int buildId)
     {
         var build = _context.Builds.FirstOrDefault(x => x.Id == buildId);
 
@@ -60,6 +60,7 @@ public class BaseService : IBaseService
         build.LikesCount = likes.Count();
         _context.SaveChanges();
 
+        return build.LikesCount;
     }
 
 

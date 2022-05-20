@@ -9,8 +9,10 @@ public class RegisterRequest
     public string Username { get; set; }
 
     [Required]
-    [EnumDataType(typeof(Race), ErrorMessage = "Allowed values: Terran, Protoss, Zerg, Any")]
+    [EnumDataType(typeof(Race), ErrorMessage = "Allowed values: Terran, Protoss, Zerg")]
     public Race Race { get; set; }
+    [Required]
+    public string ProfileImage { get; set; }
 
     [Required]
     [DataType(DataType.Password)]
