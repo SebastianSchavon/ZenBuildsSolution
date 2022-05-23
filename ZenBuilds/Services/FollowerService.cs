@@ -13,6 +13,7 @@ public interface IFollowerService
 {
     void AddFollow(FollowRequest followRequest);
     void RemoveFollow(FollowRequest followRequest);
+    bool FollowCheck(FollowRequest followRequest);
 
     IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId);
     IEnumerable<GetFollowerResponse> GetUserFollowing(int user_UserId);
@@ -56,6 +57,18 @@ public class FollowerService : IFollowerService
 
         _context.Followers.Remove(follower);
         _context.SaveChanges();
+    }
+
+    public bool FollowCheck(FollowRequest followRequest)
+    {
+        if(_context.Followers.Any(x => x.User_UserId == followRequest.User_UserId && x.Follower_UserId == followRequest.Follower_UserId))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId)

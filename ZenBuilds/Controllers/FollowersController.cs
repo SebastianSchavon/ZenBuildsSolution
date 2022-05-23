@@ -56,6 +56,19 @@ public class FollowersController : BaseController
 
     }
 
+    [HttpGet("followCheck/{follower_UserId}")]
+    public IActionResult FollowCheck(int follower_UserId)
+    {
+        var followRequest = new FollowRequest
+        {
+            User_UserId = GetAuthenticatedUserId(),
+            Follower_UserId = follower_UserId
+        };
+
+        var followCheck = _followerService.FollowCheck(followRequest);
+        return Ok(followCheck);
+    }
+
     [HttpGet("getUserFollowers/{follower_UserId}")]
     public IActionResult GetUserFollowers(int follower_UserId)
     {

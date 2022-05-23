@@ -15,6 +15,7 @@ public static class StringManagement
         //}
         
         Regex.Replace(content, @"\n+", "\n");
+        Regex.Replace(content, @"\s+", "");
 
         return Regex.Replace(content, @"\t+", " ");
 
