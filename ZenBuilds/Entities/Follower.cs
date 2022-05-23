@@ -10,6 +10,5 @@ public class Follower
     public int Follower_UserId { get; set; }
     public User Follower_User { get; set; }
 
-    [Column(TypeName = "SmallDateTime ")]
-    public DateTime FollowDate { get; set; }
+    public string FollowDate { get; set; }
 }

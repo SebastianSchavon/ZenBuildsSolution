@@ -17,6 +17,7 @@ public interface IUserService
     IEnumerable<GetUserResponse> GetTop20Users();
     GetUserResponse GetUserByUsername(string username);
     GetAuthenticatedUserResponse GetAuthenticatedUser(int userId);
+    GetUserResponse GetUserByUserId(int userId);
     User GetUserById(int id);
 }
 
@@ -80,7 +81,7 @@ public class UserService : IUserService
 
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-        user.RegisterDate = DateTime.Now;
+        user.RegisterDate = DateTime.Now.ToString("yyyy-MM-dd");
 
         _context.Users.Add(user);
         _context.SaveChanges();
@@ -162,6 +163,15 @@ public class UserService : IUserService
 
         if (user == null)
             throw new KeyNotFoundException("User not found");
+
+        var userResponse = _mapper.Map<GetUserResponse>(user);
+
+        return userResponse;
+    }
+
+    public GetUserResponse GetUserByUserId(int userId)
+    {
+        var user = _context.Users.Include(x => x.Builds).FirstOrDefault(x => x.Id == userId);
 
         var userResponse = _mapper.Map<GetUserResponse>(user);
 

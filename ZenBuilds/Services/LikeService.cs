@@ -43,8 +43,7 @@ public class LikeService : ILikeService
         {
             var like = _mapper.Map<Like>(likeRequest);
 
-            like.LikeDate = DateTime.Now;
-
+            like.LikeDate = DateTime.Now.ToString("yyyy-MM-dd");
             _context.Likes.Add(like);   
         }
 

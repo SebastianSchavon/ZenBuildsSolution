@@ -91,7 +91,7 @@ public class BuildsController : BaseController
     {
         try
         {
-            var build = _buildService.GetBuildById(buildId);
+            var build = _buildService.GetBuildResponseById(buildId);
             return Ok(build);
         }
         catch (KeyNotFoundException ex)

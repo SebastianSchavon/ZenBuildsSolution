@@ -32,7 +32,7 @@ public class UserLogService : IUserLogService
         var userLog = _mapper.Map<UserLog>(logAuthenticateRequest);
 
         userLog.UserId = userId;
-        userLog.Date = DateTime.Now;
+        userLog.Date = DateTime.Now.ToString("yyyy-MM-dd");
 
         _context.UserLogs.Add(userLog);
         _context.SaveChanges();

@@ -13,7 +13,5 @@ public class Like
     public int BuildId { get; set; }
     public Build Build { get; set; }
 
-
-    [Column(TypeName = "SmallDateTime ")]
-    public DateTime LikeDate { get; set; }
+    public string LikeDate { get; set; }
 }

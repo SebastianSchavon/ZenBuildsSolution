@@ -18,7 +18,7 @@ public interface IBuildService
     IEnumerable<GetBuildResponse> GetBuildsByUserIdLatest(int userId);
     IEnumerable<GetBuildResponse> GetAuthenticatedUserFeed(int userId);
     IEnumerable<GetBuildResponse> GetAuthenticatedUserFeedLatest(int userId);
-
+    GetBuildResponse GetBuildResponseById(int buildId);
     Build GetBuildById(int buildId);
 }
 
@@ -37,10 +37,12 @@ public class BuildService : IBuildService
 
     public void CreateBuild(int userId, CreateBuildRequest createBuildRequest)
     {
+        createBuildRequest.Content = StringManagement.WhitespaceRemoval(createBuildRequest.Content);
+
         var build = _mapper.Map<Build>(createBuildRequest);
 
         build.UserId = userId;
-        build.Published = DateTime.Now;
+        build.Published = DateTime.Now.ToString("yyyy-MM-dd");
 
         _context.Builds.Add(build);
         _context.SaveChanges();
@@ -120,6 +122,23 @@ public class BuildService : IBuildService
         return builds;
     }
 
+    public GetBuildResponse GetBuildResponseById(int buildId)
+    {
+        
+
+        var build = _context.Builds.Include(x => x.User).FirstOrDefault(x => x.Id == buildId);
+            
+
+            //.Select(build => _mapper.Map<GetBuildResponse>(build));
+
+        var buildResponse = _mapper.Map<GetBuildResponse>(build);
+
+        return buildResponse;
+
+    }
+
+
+    // helper method
     public Build GetBuildById(int buildId)
     {
         var build = _context.Builds.Find(buildId);

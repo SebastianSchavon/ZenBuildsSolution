@@ -40,13 +40,12 @@ public class FollowerService : IFollowerService
         if (!_context.Users.Any(x => x.Id == followRequest.Follower_UserId))
             throw new Exception("The User which you are trying to follow does not exist");
 
-        if (_context.Followers.Any(x => x.User_UserId == followRequest.User_UserId) &&
-            _context.Followers.Any(x => x.Follower_UserId == followRequest.Follower_UserId))
+        if (_context.Followers.Any(x => x.User_UserId == followRequest.User_UserId && x.Follower_UserId == followRequest.Follower_UserId))
             throw new Exception("User is already followed");
 
         var follower = _mapper.Map<Follower>(followRequest);
 
-        follower.FollowDate = DateTime.Now;
+        follower.FollowDate = DateTime.Now.ToString("yyyy-MM-dd");
 
         _context.Followers.Add(follower);
         _context.SaveChanges();

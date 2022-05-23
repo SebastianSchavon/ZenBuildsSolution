@@ -14,8 +14,8 @@ public class User
     [JsonIgnore]
     public string PasswordHash { get; set; }
     //public string Email { get; set; }
-    [Column(TypeName = "SmallDateTime ")]
-    public DateTime RegisterDate { get; set; }
+
+    public string RegisterDate { get; set; }
     public List<Build> Builds { get; set; }
     public List<UserLog> UserLogs { get; set; }
     public List<Like> LikedBuilds { get; set; }

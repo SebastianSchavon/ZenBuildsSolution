@@ -7,5 +7,5 @@ public class GetFollowerResponse
     public int ZenPoints { get; set; }
     public string Description { get; set; }
     public string ProfileImage { get; set; }
-    public DateTime FollowDate { get; set; }
+    public string FollowDate { get; set; }
 }
