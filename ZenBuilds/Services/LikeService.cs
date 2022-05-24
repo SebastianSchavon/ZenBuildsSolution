@@ -28,7 +28,7 @@ public class LikeService : ILikeService
 
     }
 
-    // split into three methods?
+    // test
     public int ToggleLike(LikeRequest likeRequest)
     {
         if (!_context.Builds.Any(x => x.Id == likeRequest.BuildId))
