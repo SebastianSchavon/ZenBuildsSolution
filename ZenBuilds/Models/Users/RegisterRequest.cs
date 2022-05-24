@@ -11,7 +11,7 @@ public class RegisterRequest
     ///     [\r\n\t\f ] no whitespaces, newlines, tabs or anything like that
     /// </summary>
     [Required(ErrorMessage = "Username is required.")]
-    [RegularExpression(@"^[^\p{P}\p{Sm}]*$[\r\n\t\f ]", ErrorMessage = "No special characters in username")]
+    [RegularExpression(@"^[a-zA-Z0-9_]+$", ErrorMessage = "Only letters, numbers and underscore allowed")]
     public string Username { get; set; }
 
     [Required(ErrorMessage = "Pick a main race as profile image")]

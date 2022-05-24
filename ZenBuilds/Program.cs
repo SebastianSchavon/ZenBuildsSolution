@@ -11,7 +11,13 @@ var CustomCorsPolicy = "_customCorsPolicy";
 {
     var services = builder.Services;
 
-    services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ZenBuildsDataBase")));
+    if (DetectOS.IsMacOs())
+        services.AddDbContext<DataContext, SqliteDataContext>();
+    else
+        services.AddDbContext<DataContext>();
+
+
+    //services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ZenBuildsDataBase")));
 
     // limit app access to specific origin
     services.AddCors(options =>
