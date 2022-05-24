@@ -33,8 +33,9 @@ public class BaseService : IBaseService
         var user = _context.Users.FirstOrDefault(x => x.Id == userId);
         var builds = _context.Builds.Where(x => x.UserId == userId);
         user.ZenPoints = builds.Sum(x => x.LikesCount);
-        UpdateAllZenPoints();
+        
         _context.SaveChanges();
+        
     }
 
     public void UpdateAllZenPoints()
@@ -58,8 +59,9 @@ public class BaseService : IBaseService
         var likes = _context.Likes.Where(x => x.BuildId == buildId);
 
         build.LikesCount = likes.Count();
+        
         _context.SaveChanges();
-
+        UpdateAllZenPoints();
         return build.LikesCount;
     }
 

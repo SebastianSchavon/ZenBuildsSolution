@@ -63,14 +63,14 @@ public class BuildService : IBuildService
     {
         var builds = _context.Builds.Include(x => x.User).Select(build => _mapper.Map<GetBuildResponse>(build)).ToList();
 
-        return builds;
+        return builds.OrderByDescending(x => x.LikesCount);
     }
 
     public IEnumerable<GetBuildResponse> GetAllBuildsLatest()
     {
         var builds = _context.Builds.Select(build => _mapper.Map<GetBuildResponse>(build));
 
-        return builds;
+        return builds.OrderByDescending(x => x.Published);
     }
 
     public IEnumerable<GetBuildResponse> GetBuildsByUserId(int userId)
@@ -80,16 +80,17 @@ public class BuildService : IBuildService
             .Include(x => x.User)
             .Select(build => _mapper.Map<GetBuildResponse>(build)).ToList();
 
-        return builds;
+        return builds.OrderByDescending(x => x.LikesCount);
     }
 
     public IEnumerable<GetBuildResponse> GetBuildsByUserIdLatest(int userId)
     {
         var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
 
-        return builds;
+        return builds.OrderByDescending(x => x.Published);
     }
 
+    // change foreach loops to automapper or lambda??
     public IEnumerable<GetBuildResponse> GetAuthenticatedUserFeed(int userId)
     {
         var builds = new List<GetBuildResponse>();
@@ -102,7 +103,7 @@ public class BuildService : IBuildService
             }
         }
 
-        return builds;
+        return builds.OrderByDescending(x => x.LikesCount);
     }
 
     public IEnumerable<GetBuildResponse> GetAuthenticatedUserFeedLatest(int userId)
@@ -117,7 +118,7 @@ public class BuildService : IBuildService
             }
         }
 
-        return builds;
+        return builds.OrderByDescending(x => x.Published);
     }
 
     public GetBuildResponse GetBuildResponseById(int buildId)
