@@ -1,10 +1,6 @@
-﻿using ZenBuilds.Entities;
-using ZenBuilds.Models.Builds;
-using ZenBuilds.Models.Followers;
+﻿namespace ZenBuilds.Models.Followers;
 
-namespace ZenBuilds.Models.Users;
-
-public class GetUserResponse
+public class GetFollowerUserResponse
 {
     public int Id { get; set; }
     public string Username { get; set; }
@@ -12,6 +8,4 @@ public class GetUserResponse
     public string? Description { get; set; }
     public string ProfileImage { get; set; }
     public string RegisterDate { get; set; }
-
-
 }

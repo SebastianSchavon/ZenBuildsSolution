@@ -53,38 +53,54 @@ public class AutoMapperProfile : Profile
 
         CreateMap<Like, GetBuildLikeResponse>();
         CreateMap<Follower, GetFollowerResponse>();
+        CreateMap<Follower, GetAuthenticatedUserResponse>();
+        CreateMap<Follower, GetFollowerResponse>();
         CreateMap<Build, GetBuildLikeResponse>();
+        CreateMap<User, GetBuildLikeResponse>();
+        CreateMap<User, GetFollowerResponse>();
+
+        CreateMap<Build, GetFollowerResponse>();
+        CreateMap<Build, GetFollowerResponse>();
+        CreateMap<User, GetFollowerUserResponse>();
+
         CreateMap<User, GetAuthenticatedUserResponse>();
-        CreateMap<User, GetUserResponse>()
-            .ForMember(dest => dest.Builds, opt => opt.MapFrom(source => source.Builds.ToList()));
 
-        // specify object mappings
-        
+        CreateMap<User, GetUserResponse>();
 
-        
+        CreateMap<Follower, GetFollowerResponse>();
+        CreateMap<Follower, GetFollowingResponse>();
+            
 
-        
 
-        
+
+
+
+
+
         CreateMap<AuthenticateRequest, User>();
-       
+
         //CreateMap<LikeCompositeKey, Like>()
         //    .ForMember(dest => dest.BuildId, opt => opt.MapFrom(src => src.Build_BuildId))
         //    .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
-            
-            
 
-        CreateMap<Follower, GetFollowerResponse>()
-            .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
-            .ForAllMembers(opt => opt.MapFrom(src => src.User_User));
 
-        CreateMap<Follower, GetFollowerResponse>()
-            .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
-            .ForAllMembers(opt => opt.MapFrom(src => src.Follower_User));
 
-        
+        //CreateMap<Follower, GetFollowerResponse>()
+        //    .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
+        //    .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User_User));
 
-        
+
+        //CreateMap<Follower, GetFollowingResponse>()
+        //    .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
+        //    .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.Follower_User));
+
+        //CreateMap<Follower, GetFollowerResponse>()
+        //    .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
+        //    .ForAllMembers(opt => opt.MapFrom(src => src.Follower_User));
+
+
+
+
 
     }
 

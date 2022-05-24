@@ -37,12 +37,11 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// control:
+    ///     control:
     ///     if the username is currently in database
-    ///         bcrypt:
-    ///             verifies given password with stored password
-    ///             
-    /// token:
+    ///     bcrypt: verifies given password with stored password
+    ///         
+    ///     token:
     ///     generate and return a token which can be used as valid authentication for 3 days
     /// </summary>
     public AuthenticateResponse Authenticate(AuthenticateRequest request)
@@ -63,19 +62,16 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// control:
+    ///     control:
     ///     if the username or email is already in database
     ///     
-    /// bcrypt:
+    ///     bcrypt:
     ///     hash password before adding new user to the database
     /// </summary>
     public void Register(RegisterRequest request)
     {
         if (_context.Users.Any(x => x.Username == request.Username))
             throw new Exception("Username already taken");
-
-        //if (_context.Users.Any(x => x.Email == request.Email))
-        //    throw new Exception("Email already taken");
 
         var user = _mapper.Map<User>(request);
 
@@ -88,13 +84,13 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// if password is being updated: 
+    ///     if password is being updated: 
     ///     the old password needs to be verified
     ///     
-    ///         if the old password is verified:
-    ///             hash and store new password to user in database
+    ///     if the old password is verified:
+    ///     hash and store new password to user in database
     ///     
-    /// if username or email is being changed: 
+    ///     if username or email is being changed: 
     ///     check if new username or email is already taken
     /// </summary>
     public void Update(int userId, UpdateRequest request)
@@ -112,9 +108,6 @@ public class UserService : IUserService
         if (_context.Users.Any(x => x.Username == request.Username) && user.Username != request.Username)
             throw new Exception("Username already taken");
 
-        //if (_context.Users.Any(x => x.Email == request.Email))
-        //    throw new Exception("Email already taken");
-
         _mapper.Map(request, user);
 
         _context.Users.Update(user);
@@ -129,7 +122,7 @@ public class UserService : IUserService
     }
 
     /// <summary>
-    /// use as leaderbord
+    ///     use as leaderbord
     ///     users with the most zenpoints on top
     /// </summary>
     public IEnumerable<GetUserResponse> GetAllUsers()
@@ -141,18 +134,7 @@ public class UserService : IUserService
 
     public IEnumerable<GetUserResponse> GetTop20Users()
     {
-        //var users = (_context.Users.Select(user => new User
-        //{
-        //    Id,
-        //    U
-        //    Builds = (List<Build>)_context.Builds.Where(x => x.UserId == user.Id)
-
-        //}).Take(20).ToList()).Select(user => _mapper.Map<GetUserResponse>(user)).Take(20).ToList();
-
-
         var users = _context.Users.Include(x => x.Builds).Select(user => _mapper.Map<GetUserResponse>(user)).Take(20).ToList();
-
-
 
         return users.OrderByDescending(x => x.ZenPoints);
     }
@@ -171,7 +153,7 @@ public class UserService : IUserService
 
     public GetUserResponse GetUserByUserId(int userId)
     {
-        var user = _context.Users.Include(x => x.Builds).FirstOrDefault(x => x.Id == userId);
+        var user = _context.Users.FirstOrDefault(x => x.Id == userId);
 
         var userResponse = _mapper.Map<GetUserResponse>(user);
 
@@ -180,16 +162,11 @@ public class UserService : IUserService
 
     public GetAuthenticatedUserResponse GetAuthenticatedUser(int userId)
     {
-        var user = _context.Users
-            .Include(x => x.Builds)
-            .Include(x => x.LikedBuilds)
-            .Include(x => x.Followers)
-            .Include(x => x.Following)
-            .SingleOrDefault(x => x.Id == userId);
+        var user = _context.Users.SingleOrDefault(x => x.Id == userId);
 
-        var use2 = _mapper.Map<GetAuthenticatedUserResponse>(user);
+        var user2 = _mapper.Map<GetAuthenticatedUserResponse>(user);
 
-        return use2;
+        return user2;
     }
 
     // helper methods

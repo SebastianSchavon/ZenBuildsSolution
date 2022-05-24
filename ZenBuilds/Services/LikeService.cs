@@ -51,7 +51,7 @@ public class LikeService : ILikeService
 
 
         
-        _baseService.UpdateAllZenPoints();
+        
         return _baseService.UpdateBuildLikes(likeRequest.BuildId);
     }
 

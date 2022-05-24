@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using ZenBuilds.Entities;
 using ZenBuilds.Helpers;
 using ZenBuilds.Models.Followers;
@@ -16,7 +17,7 @@ public interface IFollowerService
     bool FollowCheck(FollowRequest followRequest);
 
     IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId);
-    IEnumerable<GetFollowerResponse> GetUserFollowing(int user_UserId);
+    IEnumerable<GetFollowingResponse> GetUserFollowing(int user_UserId);
     Follower GetFollower(FollowRequest followRequest);
 
 }
@@ -73,37 +74,27 @@ public class FollowerService : IFollowerService
 
     public IEnumerable<GetFollowerResponse> GetUserFollowers(int follower_UserId)
     {
-        // this needs a automapper
-        var following = _context.Followers.Where(x => x.Follower_UserId == follower_UserId)
-            .Select(follower => new GetFollowerResponse
-            {
-                Id = follower.User_User.Id,
-                Username = follower.User_User.Username,
-                Description = follower.User_User.Description,
-                ZenPoints = follower.User_User.ZenPoints,
-                FollowDate = follower.FollowDate
 
-            });
+        var followers = _context.Followers
+            .Include(x => x.User_User)
+            .Include(x => x.Follower_User)
+            .Where(x => x.Follower_UserId == follower_UserId)
+            .Select(followers => _mapper.Map<GetFollowerResponse>(followers)).ToList();
+ 
 
-        return following;
+        return followers;
 
     }
 
-    public IEnumerable<GetFollowerResponse> GetUserFollowing(int user_UserId)
+    public IEnumerable<GetFollowingResponse> GetUserFollowing(int user_UserId)
     {
-        // this needs a automapper
-        var following = _context.Followers.Where(x => x.User_UserId == user_UserId)
-            .Select(follower => new GetFollowerResponse
-            {
-                Id = follower.Follower_User.Id,
-                Username = follower.Follower_User.Username,
-                Description = follower.Follower_User.Description,
-                ZenPoints = follower.Follower_User.ZenPoints,
-                FollowDate = follower.FollowDate
+        var following = _context.Followers
+            .Include(x => x.User_User)
+            .Include(x => x.Follower_User)
+            .Where(x => x.User_UserId == user_UserId)
+            .Select(followers => _mapper.Map<GetFollowingResponse>(followers));
 
-            });
-
-        return following.OrderBy(x => x.FollowDate);
+        return following;
     }
 
     // helper method

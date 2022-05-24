@@ -13,8 +13,6 @@ public class User
     public string ProfileImage { get; set; }
     [JsonIgnore]
     public string PasswordHash { get; set; }
-    //public string Email { get; set; }
-
     public string RegisterDate { get; set; }
     public List<Build> Builds { get; set; }
     public List<UserLog> UserLogs { get; set; }

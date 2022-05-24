@@ -12,5 +12,4 @@ public class GetAuthenticatedUserResponse
     public string? Description { get; set; }
     public string ProfileImage { get; set; }
     public string RegisterDate { get; set; }
-
 }

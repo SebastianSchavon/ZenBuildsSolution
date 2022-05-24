@@ -75,8 +75,6 @@ public class BuildService : IBuildService
 
     public IEnumerable<GetBuildResponse> GetBuildsByUserId(int userId)
     {
-        //var builds = _context.Builds.Where(x => x.UserId == userId).Select(build => _mapper.Map<GetBuildResponse>(build));
-
         var builds = _context.Builds
             .Where(x => x.UserId == userId)
             .Include(x => x.User)

@@ -12,8 +12,8 @@ public class UpdateRequest
     public string ProfileImage { get; set; }
 
     public string? OldPassword { get; set; }
-
+    [DataType(DataType.Password)]
     public string? NewPassword { get; set; }
-    //public stri?ng Email { get; set; }
+    
 
 }

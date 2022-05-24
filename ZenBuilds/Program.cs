@@ -26,10 +26,11 @@ var CustomCorsPolicy = "_customCorsPolicy";
             });
     });
 
-    services.AddControllers();
+    //services.AddControllers();
 
-    // enables enum converting
+    
     services.AddControllers()
+    // enables enum converting to controllers
     .AddJsonOptions(opts =>
     {
         opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
