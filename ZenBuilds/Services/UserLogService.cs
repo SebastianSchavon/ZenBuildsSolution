@@ -7,7 +7,7 @@ namespace ZenBuilds.Services;
 
 public interface IUserLogService
 {
-    void LogAuthentication(int userId, LogAuthenticateRequest logAuthenticateRequest);
+    void LogAuthentication(LogAuthenticateRequest logAuthenticateRequest);
     IEnumerable<UserLog> GetAllLogs();
     IEnumerable<UserLog> GetAuthenticatedUserLogs(int userId);
     IEnumerable<UserLog> GetSuccessfulAuthenticatedUserLogs(int userId);
@@ -27,11 +27,13 @@ public class UserLogService : IUserLogService
     }
 
     // execute in frontend depending on what authentication response is ?
-    public void LogAuthentication(int userId, LogAuthenticateRequest logAuthenticateRequest)
+    public void LogAuthentication(LogAuthenticateRequest logAuthenticateRequest)
     {
         var userLog = _mapper.Map<UserLog>(logAuthenticateRequest);
 
-        userLog.UserId = userId;
+        // apply userId?
+        userLog.User = GetUserByUsername(logAuthenticateRequest.Username);
+        userLog.UserId = GetUserByUsername(logAuthenticateRequest.Username).Id;
         userLog.Date = DateTime.Now.ToString("yyyy-MM-dd");
 
         _context.UserLogs.Add(userLog);
@@ -56,6 +58,18 @@ public class UserLogService : IUserLogService
     public IEnumerable<UserLog> GetUnsuccessfulAuthenticatedUserLogs(int userId)
     {
         return _context.UserLogs.Where(x => x.UserId == userId && x.AuthSuccessful == false);
+    }
+
+    // helper method
+
+    public User GetUserByUsername(string username)
+    {
+        var user = _context.Users.SingleOrDefault(x => x.Username == username);
+
+        if (user == null)
+            throw new KeyNotFoundException("User not found");    
+
+        return user;
     }
 
 }

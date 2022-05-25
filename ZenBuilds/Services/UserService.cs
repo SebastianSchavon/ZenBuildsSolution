@@ -18,7 +18,7 @@ public interface IUserService
     GetUserResponse GetUserByUsername(string username);
     GetAuthenticatedUserResponse GetAuthenticatedUser(int userId);
     GetUserResponse GetUserByUserId(int userId);
-    User GetUserById(int id);
+    
 }
 
 public class UserService : IUserService

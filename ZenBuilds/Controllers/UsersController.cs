@@ -54,7 +54,7 @@ public class UsersController : BaseController
         }
         catch (Exception ex)
         {
-            return BadRequest();
+            return BadRequest(ex.Message);
         }
     }
 

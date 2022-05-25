@@ -14,3 +14,10 @@ public enum Race
     Zerg,
     Any
 }
+public enum ProfileImage
+{
+    Terran,
+    Protoss,
+    Zerg,
+    Any
+}

@@ -9,5 +9,6 @@ public class ToggleLikeRequest
 
     [Required]
     public int UserId { get; set; }
+    [Required]
     public int BuildId { get; set; }
 }

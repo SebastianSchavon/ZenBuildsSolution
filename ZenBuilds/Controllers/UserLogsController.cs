@@ -19,7 +19,7 @@ public class UserLogsController : BaseController
     {
         try
         {
-            _userLogService.LogAuthentication(GetAuthenticatedUserId(), logAuthenticateRequest);
+            _userLogService.LogAuthentication(logAuthenticateRequest);
             return Ok(new { message = "Authentication logged" });
         }
         catch (Exception ex)

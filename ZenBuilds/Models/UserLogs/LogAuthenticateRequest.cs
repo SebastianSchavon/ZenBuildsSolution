@@ -3,7 +3,8 @@
 public class LogAuthenticateRequest
 {
     public string Ip { get; set; }
+    public string Username { get; set; }
     public bool AuthSuccessful { get; set; }
-    public string Date { get; set; }
+    
 
 }

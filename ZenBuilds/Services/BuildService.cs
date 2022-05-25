@@ -123,8 +123,6 @@ public class BuildService : IBuildService
 
     public GetBuildResponse GetBuildResponseById(int buildId)
     {
-        
-
         var build = _context.Builds.Include(x => x.User).FirstOrDefault(x => x.Id == buildId);
             
 
