@@ -6,11 +6,11 @@ namespace ZenBuilds.Models.Builds;
 public class CreateBuildRequest
 {
     [Required]
-    [MaxLength(250, ErrorMessage = "Max length: 50"), MinLength(8, ErrorMessage = "Min length: 4")]
+    [MaxLength(250, ErrorMessage = "Title cannot exceed more than 50 characters"), MinLength(8, ErrorMessage = "Title must be more than 4 characters")]
     public string Title { get; set; }
 
     [Required]
-    [DataType(DataType.MultilineText), MaxLength(250, ErrorMessage = "Max length: 250"), MinLength(8, ErrorMessage = "Min length: 8")]
+    [DataType(DataType.MultilineText), MaxLength(250, ErrorMessage = "Build cannot exceed more than 250 characters"), MinLength(8, ErrorMessage = "Build must be more than 8 characters")]
     public string Content { get; set; }
 
     [Required]

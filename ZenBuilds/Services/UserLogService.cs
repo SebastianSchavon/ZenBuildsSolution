@@ -34,7 +34,7 @@ public class UserLogService : IUserLogService
         // apply userId?
         userLog.User = GetUserByUsername(logAuthenticateRequest.Username);
         userLog.UserId = GetUserByUsername(logAuthenticateRequest.Username).Id;
-        userLog.Date = DateTime.Now.ToString("yyyy-MM-dd");
+        userLog.Date = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
 
         _context.UserLogs.Add(userLog);
         _context.SaveChanges();

@@ -14,6 +14,7 @@ public class UserLogsController : BaseController
         _userLogService = userLogService;
     }
 
+    [AllowAnonymous]
     [HttpPost("logAuthentication")]
     public IActionResult LogAuthentication(LogAuthenticateRequest logAuthenticateRequest)
     {
