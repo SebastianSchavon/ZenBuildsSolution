@@ -70,12 +70,21 @@ var CustomCorsPolicy = "_customCorsPolicy";
 
 var app = builder.Build();
 
-// lägg till för mac
+// lï¿½gg till fï¿½r mac
 // migrate any database changes on startup (includes initial db creation)
 using (var scope = app.Services.CreateScope())
 {
-    var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-    dataContext.Database.Migrate();
+    if (DetectOS.IsMacOs())
+    {
+        var dataContext = scope.ServiceProvider.GetRequiredService<SqliteDataContext>();
+        dataContext.Database.Migrate();
+    }
+    else
+    {
+        var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+        dataContext.Database.Migrate();
+    }
+
 }
 
 {
