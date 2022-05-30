@@ -28,6 +28,7 @@ public class BuildService : IBuildService
     private readonly IMapper _mapper;
     private IBaseService _baseService;
 
+    // skall jag importera min StringManagement klass i konstruktorn istället för att den är static?
     public BuildService(DataContext context, IMapper mapper, IBaseService baseService)
     {
         _context = context;
