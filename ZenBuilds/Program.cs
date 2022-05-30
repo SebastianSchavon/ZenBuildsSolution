@@ -1,3 +1,4 @@
+using IdentityModel;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using ZenBuilds.Authorization;
@@ -25,8 +26,8 @@ var CustomCorsPolicy = "_customCorsPolicy";
         options.AddPolicy(name: CustomCorsPolicy,
             policy =>
             {
-                //policy.WithOrigins("http://localhost:3000")
-                policy.AllowAnyOrigin()
+                policy.WithOrigins("http://localhost:3000")
+                //policy.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader();
             });
@@ -47,7 +48,6 @@ var CustomCorsPolicy = "_customCorsPolicy";
     services.AddAutoMapper(typeof(Program));
 
     // configure strongly typed settings object <= pass appsettings value from appsettings.json to AppSettings object. 
-    // but why need? cant i access the secret key without it being defined here?
     services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
     // configure DI (dependancy injections) for application services
@@ -61,10 +61,16 @@ var CustomCorsPolicy = "_customCorsPolicy";
     services.AddScoped<IBaseService, BaseService>();
 
 
+    services.AddAuthentication("Bearer").AddIdentityServerAuthentication("Bearer", options =>
+    {
+        options.ApiName = "ZenBuilds";
+        options.Authority = "https://localhost:7154";
+    });
 }
 
 var app = builder.Build();
 
+// lägg till för mac
 // migrate any database changes on startup (includes initial db creation)
 using (var scope = app.Services.CreateScope())
 {
