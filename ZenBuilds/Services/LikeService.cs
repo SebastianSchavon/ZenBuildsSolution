@@ -28,7 +28,6 @@ public class LikeService : ILikeService
 
     }
 
-    // test
     public int ToggleLike(LikeRequest likeRequest)
     {
         if (!_context.Builds.Any(x => x.Id == likeRequest.BuildId))
@@ -49,9 +48,6 @@ public class LikeService : ILikeService
 
         _context.SaveChanges();
 
-
-        
-        
         return _baseService.UpdateBuildLikes(likeRequest.BuildId);
     }
 

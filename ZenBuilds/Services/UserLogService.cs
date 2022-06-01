@@ -26,12 +26,10 @@ public class UserLogService : IUserLogService
         _mapper = mapper;
     }
 
-    // execute in frontend depending on what authentication response is ?
     public void LogAuthentication(LogAuthenticateRequest logAuthenticateRequest)
     {
         var userLog = _mapper.Map<UserLog>(logAuthenticateRequest);
 
-        // apply userId?
         userLog.User = GetUserByUsername(logAuthenticateRequest.Username);
         userLog.UserId = GetUserByUsername(logAuthenticateRequest.Username).Id;
         userLog.Date = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
@@ -61,7 +59,6 @@ public class UserLogService : IUserLogService
     }
 
     // helper method
-
     public User GetUserByUsername(string username)
     {
         var user = _context.Users.SingleOrDefault(x => x.Username == username);

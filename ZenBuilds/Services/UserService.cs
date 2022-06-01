@@ -28,7 +28,6 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     IBaseService _baseService;
 
-    // Det är från program.cs som argumenten skickas till parametrarna, eftersom vi har injecerat den funktionaliteten med AddScoped. 
     public UserService(DataContext context, IJwtUtils jwtUtils, IMapper mapper, IBaseService baseService)
     {
         _context = context;
