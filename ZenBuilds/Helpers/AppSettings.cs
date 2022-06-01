@@ -1,8 +1,7 @@
 ﻿namespace ZenBuilds.Helpers;
 
 /// <summary>
-/// Used to retrieve value from appsettings.json
-/// Ref JwtUtils.cs and program.
+///     Use to contain the secret key from appsettings
 /// </summary>
 public class AppSettings
 {

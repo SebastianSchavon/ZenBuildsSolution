@@ -41,7 +41,7 @@ var CustomCorsPolicy = "_customCorsPolicy";
     .AddJsonOptions(opts =>
     {
         opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        opts.JsonSerializerOptions.IgnoreNullValues = true;
+        //opts.JsonSerializerOptions.IgnoreNullValues = true;
     });
 
     // configure automapper with all automapper profiles from this assembly
@@ -52,7 +52,8 @@ var CustomCorsPolicy = "_customCorsPolicy";
 
     // configure DI (dependancy injections) for application services
     services.AddScoped<IJwtUtils, JwtUtils>();
-
+    services.AddScoped<IStringManagement, StringManagement>();
+    
     services.AddScoped<IBuildService, BuildService>();
     services.AddScoped<IFollowerService, FollowerService>();
     services.AddScoped<IUserLogService, UserLogService>();
@@ -70,7 +71,6 @@ var CustomCorsPolicy = "_customCorsPolicy";
 
 var app = builder.Build();
 
-// l�gg till f�r mac
 // migrate any database changes on startup (includes initial db creation)
 using (var scope = app.Services.CreateScope())
 {
@@ -91,7 +91,6 @@ using (var scope = app.Services.CreateScope())
     app.UseCors(CustomCorsPolicy);
 
     app.UseMiddleware<JwtMiddleware>();
-
     app.MapControllers();
 }
 

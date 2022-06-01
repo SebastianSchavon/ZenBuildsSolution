@@ -2,9 +2,9 @@
 
 #nullable disable
 
-namespace ZenBuilds.SqliteMigrations
+namespace ZenBuilds.Migrations
 {
-    public partial class InitialMacCreate : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,14 +12,14 @@ namespace ZenBuilds.SqliteMigrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Username = table.Column<string>(type: "TEXT", nullable: false),
-                    ZenPoints = table.Column<int>(type: "INTEGER", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    ProfileImage = table.Column<string>(type: "TEXT", nullable: false),
-                    PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
-                    RegisterDate = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ZenPoints = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfileImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RegisterDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,15 +30,15 @@ namespace ZenBuilds.SqliteMigrations
                 name: "Builds",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Title = table.Column<string>(type: "TEXT", nullable: false),
-                    Content = table.Column<string>(type: "TEXT", nullable: false),
-                    LikesCount = table.Column<int>(type: "INTEGER", nullable: false),
-                    Published = table.Column<string>(type: "TEXT", nullable: false),
-                    PlayerRace = table.Column<int>(type: "INTEGER", nullable: false),
-                    OpponentRace = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LikesCount = table.Column<int>(type: "int", nullable: false),
+                    Published = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PlayerRace = table.Column<int>(type: "int", nullable: false),
+                    OpponentRace = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,9 +55,9 @@ namespace ZenBuilds.SqliteMigrations
                 name: "Followers",
                 columns: table => new
                 {
-                    User_UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Follower_UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    FollowDate = table.Column<string>(type: "TEXT", nullable: false)
+                    User_UserId = table.Column<int>(type: "int", nullable: false),
+                    Follower_UserId = table.Column<int>(type: "int", nullable: false),
+                    FollowDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -73,19 +73,19 @@ namespace ZenBuilds.SqliteMigrations
                         column: x => x.User_UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserLogs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Ip = table.Column<string>(type: "TEXT", nullable: false),
-                    AuthSuccessful = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Date = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Ip = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthSuccessful = table.Column<bool>(type: "bit", nullable: false),
+                    Date = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -102,11 +102,11 @@ namespace ZenBuilds.SqliteMigrations
                 name: "Likes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    BuildId = table.Column<int>(type: "INTEGER", nullable: false),
-                    LikeDate = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    BuildId = table.Column<int>(type: "int", nullable: false),
+                    LikeDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

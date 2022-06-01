@@ -14,19 +14,16 @@ public class LikesController : BaseController
         _likeService = likeService;
     }
 
-    // change to put?
     [HttpPut("toggleLike/{id}")]
     public IActionResult ToggleLike(int id)
     {
-        var likeRequest = new LikeRequest
-        {
-            BuildId = id,
-            UserId = GetAuthenticatedUserId()
-        };
-
         try
         {
-            var likes = _likeService.ToggleLike(likeRequest);
+            var likes = _likeService.ToggleLike(new LikeRequest
+            {
+                BuildId = id,
+                UserId = GetAuthenticatedUserId()
+            });
             return Ok(likes);
         }
         catch (Exception ex)

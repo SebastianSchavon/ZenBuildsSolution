@@ -27,18 +27,19 @@ public class BuildService : IBuildService
     private DataContext _context;
     private readonly IMapper _mapper;
     private IBaseService _baseService;
+    private IStringManagement _stringManagement;
 
-    // skall jag importera min StringManagement klass i konstruktorn istället för att den är static?
-    public BuildService(DataContext context, IMapper mapper, IBaseService baseService)
+    public BuildService(DataContext context, IMapper mapper, IBaseService baseService, IStringManagement stringManagement)
     {
         _context = context;
         _mapper = mapper;
         _baseService = baseService;
+        _stringManagement = stringManagement;
     }
 
     public void CreateBuild(int userId, CreateBuildRequest createBuildRequest)
     {
-        createBuildRequest.Content = StringManagement.WhitespaceRemoval(createBuildRequest.Content);
+        createBuildRequest.Content = _stringManagement.WhitespaceRemoval(createBuildRequest.Content);
 
         var build = _mapper.Map<Build>(createBuildRequest);
 
@@ -91,33 +92,24 @@ public class BuildService : IBuildService
         return builds.OrderByDescending(x => x.Published);
     }
 
-    // change foreach loops to automapper or lambda??
     public IEnumerable<GetBuildResponse> GetAuthenticatedUserFeed(int userId)
     {
-        var builds = new List<GetBuildResponse>();
-
-        foreach (var follower in _context.Followers.Where(x => x.User_UserId == userId))
-        {
-            foreach (var build in GetBuildsByUserId(follower.Follower_UserId))
-            {
-                builds.Add(build);
-            }
-        }
+        var builds = _context.Followers
+            .Where(x => x.User_UserId == userId)
+            .SelectMany(x => x.Follower_User.Builds.ToList())
+            .Include(x => x.User)
+            .Select(x => _mapper.Map<GetBuildResponse>(x)).ToList();
 
         return builds.OrderByDescending(x => x.LikesCount);
     }
 
     public IEnumerable<GetBuildResponse> GetAuthenticatedUserFeedLatest(int userId)
     {
-        var builds = new List<GetBuildResponse>();
-
-        foreach (var follower in _context.Followers.Where(x => x.User_UserId == userId))
-        {
-            foreach (var build in GetAuthenticatedUserFeed(follower.Follower_UserId))
-            {
-                builds.Add(build);
-            }
-        }
+        var builds = _context.Followers
+          .Where(x => x.User_UserId == userId)
+          .SelectMany(x => x.Follower_User.Builds.ToList())
+          .Include(x => x.User)
+          .Select(x => _mapper.Map<GetBuildResponse>(x)).ToList();
 
         return builds.OrderByDescending(x => x.Published);
     }
@@ -125,9 +117,6 @@ public class BuildService : IBuildService
     public GetBuildResponse GetBuildResponseById(int buildId)
     {
         var build = _context.Builds.Include(x => x.User).FirstOrDefault(x => x.Id == buildId);
-            
-
-            //.Select(build => _mapper.Map<GetBuildResponse>(build));
 
         var buildResponse = _mapper.Map<GetBuildResponse>(build);
 

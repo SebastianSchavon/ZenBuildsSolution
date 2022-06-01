@@ -10,20 +10,24 @@ public class JwtMiddleware
 
     public JwtMiddleware(RequestDelegate next)
     {
-        // next middleware?
         _next = next;
     }
 
     /// <summary>
-    /// 
+    ///     Retrieve token from request header
+    ///     Retrieve user id from token and get user by id from db 
+    ///     Set user to context items
     /// </summary>
+    /// <param name="context"> Contains the request </param>
+    /// <param name="userService"> GetUserById method </param>
+    /// <param name="jwtUtils"> ValidateToken method </param>
+    /// <returns></returns>
     public async Task Invoke(HttpContext context, IUserService userService, IJwtUtils jwtUtils)
     {
         var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
         var userId = jwtUtils.ValidateToken(token);
         if (userId != null)
         {
-            // attach user to context on successful jwt validation
             context.Items["User"] = userService.GetUserById(userId.Value);
         }
 

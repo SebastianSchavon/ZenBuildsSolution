@@ -24,14 +24,16 @@ public class DataContext : DbContext
     public DbSet<Build> Builds { get; set; }
     public DbSet<UserLog> UserLogs { get; set; }
 
-
-    // fluent api to create composite key with user and follower IDs
+    /// <summary>
+    ///     Define follower composite key    
+    ///     Define follower and user relations to resolve problem of two follower-collections in user entity
+    ///     DeleteBehavior.Restrict set foreing keys to null when dependent entitie delete
+    /// </summary>
+    /// <param name="builder"></param>
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        // composite primary key 
         builder.Entity<Follower>().HasKey(x => new { x.User_UserId, x.Follower_UserId });
-        builder.Entity<Like>().HasKey(x => x.Id);
-        
+        //builder.Entity<Like>().HasKey(x => x.Id);
 
         builder.Entity<Follower>()
             .HasOne(x => x.Follower_User)
@@ -42,9 +44,9 @@ public class DataContext : DbContext
         builder.Entity<Follower>()
             .HasOne(x => x.User_User)
             .WithMany(x => x.Following)
-            .HasForeignKey(x => x.User_UserId);
+            .HasForeignKey(x => x.User_UserId)
+            .OnDelete(DeleteBehavior.Restrict);
 
-        // what does DeleteBehavior do?
         builder.Entity<User>()
             .HasMany(x => x.Builds)
             .WithOne(x => x.User)
@@ -52,17 +54,8 @@ public class DataContext : DbContext
 
 
 
-        //// setting follower relations to resolve problem of not having two follower-collections in user entity
-        //builder.Entity<Follower>()
-        //    .HasOne(x => x.Follower_User)
-        //    .WithMany()
-        //    .HasForeignKey(x => x.Follower_UserId)
-        //    .OnDelete(DeleteBehavior.Restrict);
 
-        //builder.Entity<Follower>()
-        //    .HasOne(x => x.User_User)
-        //    .WithMany(x => x.Followers)
-        //    .HasForeignKey(x => x.User_UserId);
+
     }
 
 }

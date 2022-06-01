@@ -21,19 +21,26 @@ public class JwtUtils : IJwtUtils
 
     public JwtUtils(IOptions<AppSettings> appSettings)
     {
-        // get key from appsettings.json
         _appSettings = appSettings.Value;
     }
 
+    /// <summary>
+    ///     Generate token with create token method from JwtSecurityTokenHandler class
+    ///     
+    ///     Configure token claims
+    ///         Authenticated users id 
+    ///         Expire date 
+    ///     
+    ///     Sign and enconde token with the secret key
+    /// </summary>
+    /// <param name="user"> user object from authenticate method in user service </param>
+    /// <returns> HmacSha2559 algoritm encoded token </returns>
     public string GenerateToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
-
-        // configure token properties
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            // a claim is the bagage of the token, and in this case we send the id as a bagage?
             Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
             Expires = DateTime.UtcNow.AddDays(3),
 
@@ -41,13 +48,19 @@ public class JwtUtils : IJwtUtils
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(EncodeKey()), SecurityAlgorithms.HmacSha256Signature)
         };
 
-        // create token with defined configurations
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
-        // serializes token into a JWT in Compact Serialization Format.
         return tokenHandler.WriteToken(token);
     }
 
+    /// <summary>
+    ///     Validate token with validatetoken method from the JwtSecurityTokenHandler class
+    ///     Retrieve and return user id from token claim if the issuersigningkey (secret key) matches
+    ///     
+    ///     Validate the IssuerSigningKey but not the Issuer or Audience
+    /// </summary>
+    /// <param name="token"> Token from JwtMiddleware </param>
+    /// <returns> Users id from claim </returns>
     public int? ValidateToken(string token)
     {
         if (token == null)
@@ -57,9 +70,8 @@ public class JwtUtils : IJwtUtils
 
         try
         {
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            var jwtToken = tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
-                // https://stackoverflow.com/questions/70597009/what-is-the-meaning-of-validateissuer-and-validateaudience-in-jwt
 
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(EncodeKey()),
@@ -70,9 +82,6 @@ public class JwtUtils : IJwtUtils
                 ClockSkew = TimeSpan.Zero
 
             }, out SecurityToken validateToken);
-
-            // när programmet är up and running => debugga för att se över vad validaToken ovan, och jwtToken nedan innehåller
-            var jwtToken = (JwtSecurityToken)validateToken;
 
             var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
 
@@ -85,6 +94,10 @@ public class JwtUtils : IJwtUtils
         }
     }
 
+    /// <summary>
+    ///     Returns the secret key (stored in appsettings) as an byte array
+    /// </summary>
+    /// <returns></returns>
     private byte[] EncodeKey()
         => Encoding.ASCII.GetBytes(_appSettings.Secret);
 }

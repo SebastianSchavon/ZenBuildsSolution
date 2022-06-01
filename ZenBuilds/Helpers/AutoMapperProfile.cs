@@ -9,99 +9,54 @@ using ZenBuilds.Models.UserLogs;
 using ZenBuilds.Models.Users;
 
 /// <summary>
-/// use to pass values between objects with common props
+///     Use to copy property values between objects
 /// </summary>
 public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
         // build
-        CreateMap<CreateBuildRequest, Build>();
-        CreateMap<User, GetBuildUserResponse>();
-        CreateMap<Build, GetBuildResponse>()
-            .ForMember(dest => dest.User, opt => opt.MapFrom(source => source.User));
-
-
-        // follower
-        CreateMap<FollowRequest, Follower>();
-
-        // like
-        CreateMap<LikeRequest, Like>();
-        CreateMap<User, GetBuildLikeResponse>();
+        CreateMap<Build, GetBuildLikeResponse>();
+        CreateMap<Build, GetFollowerResponse>();
         CreateMap<Build, GetUserLikeResponse>();
+        CreateMap<Build, GetBuildResponse>();
+        //CreateMap<Build, GetBuildResponse>()
+        //    .ForMember(dest => dest.User, opt => opt.MapFrom(source => source.User));
 
-        // userLog
+        CreateMap<CreateBuildRequest, Build>();
+
+
+        // userlog
         CreateMap<LogAuthenticateRequest, UserLog>();
+
 
         // user
         CreateMap<User, AuthenticateResponse>();
-        CreateMap<RegisterRequest, User>();
-
-        CreateMap<UpdateRequest, User>();
-        // ignore null values passed in update request
-        //CreateMap<UpdateRequest, User>()
-        //    .ForAllMembers(x => x.Condition(
-        //        (src, dest, prop) =>
-        //        {
-        //            // ignore null & empty string properties
-        //            if (prop == null) return false;
-        //            if (prop.GetType() == typeof(string) && string.IsNullOrEmpty((string)prop)) return false;
-
-        //            return true;
-        //        }
-        //    ));
-
-        CreateMap<Like, GetBuildLikeResponse>();
-        CreateMap<Follower, GetFollowerResponse>();
-        CreateMap<Follower, GetAuthenticatedUserResponse>();
-        CreateMap<Follower, GetFollowerResponse>();
-        CreateMap<Build, GetBuildLikeResponse>();
         CreateMap<User, GetBuildLikeResponse>();
         CreateMap<User, GetFollowerResponse>();
-
-        CreateMap<Build, GetFollowerResponse>();
-        CreateMap<Build, GetFollowerResponse>();
         CreateMap<User, GetFollowerUserResponse>();
-
         CreateMap<User, GetAuthenticatedUserResponse>();
-
         CreateMap<User, GetUserResponse>();
+        CreateMap<User, GetBuildUserResponse>();
 
-        CreateMap<Follower, GetFollowerResponse>();
-        CreateMap<Follower, GetFollowingResponse>();
-            
-
-
-
-
-
-
-
+        CreateMap<RegisterRequest, User>();
+        CreateMap<UpdateRequest, User>();
         CreateMap<AuthenticateRequest, User>();
 
-        //CreateMap<LikeCompositeKey, Like>()
-        //    .ForMember(dest => dest.BuildId, opt => opt.MapFrom(src => src.Build_BuildId))
-        //    .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId));
+
+        // follower
+        CreateMap<Follower, GetFollowerResponse>();
+        CreateMap<Follower, GetFollowingResponse>();
+        CreateMap<Follower, GetAuthenticatedUserResponse>();
+        CreateMap<GetBuildResponse, Follower>();
 
 
-
-        //CreateMap<Follower, GetFollowerResponse>()
-        //    .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
-        //    .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User_User));
+        CreateMap<FollowRequest, Follower>();
 
 
-        //CreateMap<Follower, GetFollowingResponse>()
-        //    .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
-        //    .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.Follower_User));
-
-        //CreateMap<Follower, GetFollowerResponse>()
-        //    .ForMember(dest => dest.FollowDate, opt => opt.MapFrom(src => src.FollowDate))
-        //    .ForAllMembers(opt => opt.MapFrom(src => src.Follower_User));
-
-
-
-
-
+        // like
+        CreateMap<Like, GetBuildLikeResponse>();
+        CreateMap<LikeRequest, Like>();
     }
 
 }

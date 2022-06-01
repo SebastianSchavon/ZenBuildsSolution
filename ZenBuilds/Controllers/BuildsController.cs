@@ -28,11 +28,9 @@ public class BuildsController : BaseController
         }
     }
 
-
     [HttpDelete("delete/{id}")]
     public IActionResult DeleteBuild(int id)
     {
-
         try
         {
             _buildService.DeleteBuild(GetAuthenticatedUserId(), id);

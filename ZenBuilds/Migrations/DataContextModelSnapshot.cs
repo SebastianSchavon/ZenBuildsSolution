@@ -16,7 +16,7 @@ namespace ZenBuilds.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.4")
+                .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -192,7 +192,7 @@ namespace ZenBuilds.Migrations
                     b.HasOne("ZenBuilds.Entities.User", "User_User")
                         .WithMany("Following")
                         .HasForeignKey("User_UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Follower_User");

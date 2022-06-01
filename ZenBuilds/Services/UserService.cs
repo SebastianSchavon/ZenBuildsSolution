@@ -36,15 +36,6 @@ public class UserService : IUserService
         _mapper = mapper;
         _baseService = baseService;
     }
-
-    /// <summary>
-    ///     control:
-    ///     if the username is currently in database
-    ///     bcrypt: verifies given password with stored password
-    ///         
-    ///     token:
-    ///     generate and return a token which can be used as valid authentication for 3 days
-    /// </summary>
     public AuthenticateResponse Authenticate(AuthenticateRequest request)
     {
         if (!_context.Users.Any(x => x.Username == request.Username))
@@ -62,13 +53,6 @@ public class UserService : IUserService
         return response;
     }
 
-    /// <summary>
-    ///     control:
-    ///     if the username or email is already in database
-    ///     
-    ///     bcrypt:
-    ///     hash password before adding new user to the database
-    /// </summary>
     public void Register(RegisterRequest request)
     {
         if (_context.Users.Any(x => x.Username == request.Username))
@@ -84,16 +68,6 @@ public class UserService : IUserService
         _context.SaveChanges();
     }
 
-    /// <summary>
-    ///     if password is being updated: 
-    ///     the old password needs to be verified
-    ///     
-    ///     if the old password is verified:
-    ///     hash and store new password to user in database
-    ///     
-    ///     if username or email is being changed: 
-    ///     check if new username or email is already taken
-    /// </summary>
     public void Update(int userId, UpdateRequest request)
     {
         var user = GetUserById(userId);
@@ -122,10 +96,6 @@ public class UserService : IUserService
         _context.SaveChanges();
     }
 
-    /// <summary>
-    ///     use as leaderbord
-    ///     users with the most zenpoints on top
-    /// </summary>
     public IEnumerable<GetUserResponse> GetAllUsers()
     {
         var users = _context.Users.Select(user => _mapper.Map<GetUserResponse>(user)).ToList();

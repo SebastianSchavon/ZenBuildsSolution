@@ -20,7 +20,4 @@ public class User
     public List<Follower> Followers { get; set; }
     public List<Follower> Following { get; set; }
 
-
-
-
 }

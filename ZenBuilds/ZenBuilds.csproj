@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Development' " />
+
+  <ItemGroup>
+    <Compile Remove="SqliteMigrations\**" />
+    <Content Remove="SqliteMigrations\**" />
+    <EmbeddedResource Remove="SqliteMigrations\**" />
+    <None Remove="SqliteMigrations\**" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
@@ -25,11 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
-    <Folder Include="Migrations\SqliteMigrations\" />
+    <None Remove="Migrations\SqliteMigrations\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Migrations\SqliteMigrations\" />
+    <Folder Include="Migrations\SqliteMigrations\" />
   </ItemGroup>
 </Project>

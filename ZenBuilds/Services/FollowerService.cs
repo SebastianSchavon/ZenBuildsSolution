@@ -6,10 +6,6 @@ using ZenBuilds.Models.Followers;
 
 namespace ZenBuilds.Services;
 
-/// <summary>
-/// follower use composite key as primary key
-///     referenced with the id of the user who is following, followed by the id of the user who is followed
-/// </summary>
 public interface IFollowerService
 {
     void AddFollow(FollowRequest followRequest);
