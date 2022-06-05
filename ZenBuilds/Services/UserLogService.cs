@@ -9,7 +9,7 @@ public interface IUserLogService
 {
     void LogAuthentication(LogAuthenticateRequest logAuthenticateRequest);
     IEnumerable<UserLog> GetAllLogs();
-    IEnumerable<UserLog> GetAuthenticatedUserLogs(int userId);
+    IEnumerable<UserLogResponse> GetAuthenticatedUserLogs(int userId);
     IEnumerable<UserLog> GetSuccessfulAuthenticatedUserLogs(int userId);
     IEnumerable<UserLog> GetUnsuccessfulAuthenticatedUserLogs(int userId);
 
@@ -43,9 +43,10 @@ public class UserLogService : IUserLogService
         return _context.UserLogs.OrderBy(x => x.Date);
     }
 
-    public IEnumerable<UserLog> GetAuthenticatedUserLogs(int userId)
+    public IEnumerable<UserLogResponse> GetAuthenticatedUserLogs(int userId)
     {
-        return _context.UserLogs.Where(x => x.UserId == userId);
+        return _context.UserLogs.Where(x => x.UserId == userId)
+            .Select(userLog => _mapper.Map<UserLogResponse>(userLog)).ToList();
     }
 
     public IEnumerable<UserLog> GetSuccessfulAuthenticatedUserLogs(int userId)

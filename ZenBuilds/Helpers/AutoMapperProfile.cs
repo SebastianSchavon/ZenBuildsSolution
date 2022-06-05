@@ -20,15 +20,13 @@ public class AutoMapperProfile : Profile
         CreateMap<Build, GetFollowerResponse>();
         CreateMap<Build, GetUserLikeResponse>();
         CreateMap<Build, GetBuildResponse>();
-        //CreateMap<Build, GetBuildResponse>()
-        //    .ForMember(dest => dest.User, opt => opt.MapFrom(source => source.User));
 
         CreateMap<CreateBuildRequest, Build>();
 
 
         // userlog
         CreateMap<LogAuthenticateRequest, UserLog>();
-
+        CreateMap<UserLog, UserLogResponse>();
 
         // user
         CreateMap<User, AuthenticateResponse>();
